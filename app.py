@@ -727,6 +727,13 @@ def fm_restore_confirm():
 # ── Health + root ──────────────────────────────────────────────────────────────
 @app.route("/healthz")
 def healthz():
+    # Keep this minimal — must return 200 fast for Railway's healthcheck
+    # (don't query DB; DB may not exist on first deploy before Volume is mounted)
+    return jsonify({"ok": True}), 200
+
+@app.route("/healthz/full")
+def healthz_full():
+    """Deeper health check that touches the DB. For monitoring, not Railway's gate."""
     try:
         conn = db()
         n = conn.execute("SELECT COUNT(*) FROM settlements WHERE status='active'").fetchone()[0]
