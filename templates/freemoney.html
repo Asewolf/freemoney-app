@@ -971,6 +971,10 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,
   var isPro = localStorage.getItem("freemoney_pro") === "1";
   var FREE_PREVIEW_COUNT = 3;
   var _freePreviewIds = [];
+  // Sticky home-row freebie IDs — set once by renderQuickClaim and persisted
+  // across page renders. claimAndOpen's paywall check unions this with the
+  // page-specific preview, so home freebies stay clickable on every tab.
+  var _stickyFreebieIds = [];
   var FM_JSON_HEADERS = {"Content-Type":"application/json","X-Requested-With":"XMLHttpRequest"};
 
   // ---------- Pro Status Check ----------
@@ -1155,6 +1159,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,
     }
 
     _freePreviewIds = noProofList.slice(0, FREE_PREVIEW_COUNT).map(function(s){ return s.id; });
+    _stickyFreebieIds = _freePreviewIds.slice();
 
     if(noProofList.length === 0){
       // leave hidden if no items
@@ -1270,7 +1275,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,
       return;
     }
 
-    _freePreviewIds = [];
+    // Preserve sticky home freebie IDs so the home-row buttons keep working
+    // after any tab/sort change. Page-level previews are layered on top.
+    _freePreviewIds = _stickyFreebieIds.slice();
     // On the "all" tab in default deadline view, hide no-proof entries (already shown as Freebies on home).
     // BUT if the user picked a specialized sort (noproof / endingsoon / payout), respect that — don't strip.
     var sortedFull = sorted;

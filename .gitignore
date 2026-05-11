@@ -17,3 +17,7 @@ data/*.db-shm
 data/*.db-wal
 data/settlements.db
 data/*.db-*
+
+# Deploy artifacts that contain secrets / internal notes
+railway_env_vars.txt
+RAILWAY_HANDOFF.md
