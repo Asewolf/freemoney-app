@@ -507,7 +507,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,
         Free Money
       </div>
       <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
-        <button id="heroSignIn" type="button" aria-label="Sign in" style="background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);color:#fff;font-weight:800;font-size:12px;padding:8px 14px;border-radius:99px;cursor:pointer;font-family:inherit;backdrop-filter:blur(10px)">Sign in</button>
+        <button id="heroSignIn" type="button" aria-label="Restore Pro access" title="Already a subscriber? Sign in to restore Pro access." style="background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);color:#fff;font-weight:800;font-size:12px;padding:8px 14px;border-radius:99px;cursor:pointer;font-family:inherit;backdrop-filter:blur(10px)">Restore Pro</button>
         <button class="icon-btn" id="btnSearchOpen" aria-label="Search">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         </button>
@@ -1711,8 +1711,9 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,
       '<div class="modal">' +
         '<div class="modal-handle"></div>' +
         '<div class="modal-icon" style="background:linear-gradient(155deg,#2563EB,#1E3A8A)">&rarr;</div>' +
-        '<div class="modal-title">Sign in</div>' +
-        '<div class="modal-sub">Enter the email you used when subscribing. We&rsquo;ll send a 6-digit code to your inbox.</div>' +
+        '<div class="modal-title">Restore Pro access</div>' +
+        '<div class="modal-sub">Already a subscriber? Enter the email you used when you signed up. We&rsquo;ll send a 6-digit code to your inbox.</div>' +
+        '<div style="font-size:12px;color:var(--ca-gray);text-align:center;margin-top:-8px;margin-bottom:8px;line-height:1.4">New here? <a href="#" onclick="closeProModal();setTimeout(showProModal,150);return false;" style="color:#16a34a;font-weight:800;text-decoration:none">Start your 7-day free trial &rarr;</a></div>' +
         '<div id="modalRestoreForm" style="margin-top:20px"></div>' +
         '<div style="font-size:11px;color:var(--ca-gray);text-align:center;margin-top:16px;line-height:1.5">No password needed. The code is sent to the email on your subscription &mdash; only the inbox owner can sign in.</div>' +
         '<button class="modal-close" id="modalCloseBtn" type="button" style="margin-top:14px">Cancel</button>' +
@@ -1797,7 +1798,7 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,
         '<div class="modal-trial" id="planTrialNote">Free for 7 days &bull; cancel anytime</div>' +
         '<button class="modal-cta" id="stripeSubBtn" type="button">Start Free Trial</button>' +
         '<div class="modal-sec" id="planSecCopy" style="line-height:1.5;max-width:360px;margin:10px auto 0">Your card will be charged $4.99/month automatically after the 7-day trial. Cancel anytime in the app. By continuing you agree to the <a href="/terms-of-service" target="_blank" style="color:var(--ca-green);text-decoration:underline">Terms</a> and <a href="/privacy-policy" target="_blank" style="color:var(--ca-green);text-decoration:underline">Privacy Policy</a>.</div>' +
-        '<button class="modal-restore" id="modalRestoreBtn" type="button">I&rsquo;m already a member &middot; Sign in</button>' +
+        '<button class="modal-restore" id="modalRestoreBtn" type="button">Already subscribed? Restore Pro access</button>' +
         '<div id="modalRestoreForm"></div>' +
         '<button class="modal-close" id="modalCloseBtn" type="button">Maybe later</button>' +
       '</div>';
