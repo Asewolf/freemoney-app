@@ -1,0 +1,2455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#22e060">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Free Money">
+<meta name="description" content="Find and claim class action settlements. Free money waiting for you.">
+<link rel="manifest" href="/static/manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@600;700;800&display=swap" rel="stylesheet">
+<title>Free Money Finder</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --ca-green:#22c55e;--ca-green-deep:#16a34a;--ca-green-dark:#15803d;
+  --ca-black:#000;--ca-ink:#101010;--ca-ink-2:#3A3A3A;
+  --ca-gray:#6B7280;--ca-gray-2:#9CA3AF;
+  --ca-bg:#FFFFFF;--ca-surface:#F6F7F8;--ca-surface-2:#EFF0F2;--ca-border:#E8E9EB;
+  --ca-blue:#3B82F6;--ca-purple:#8B5CF6;--ca-orange:#FF6B35;--ca-yellow:#FFD400;
+  --ca-pink:#FF3CA0;--ca-red:#FF4949;
+  --r-sm:12px;--r-md:18px;--r-lg:28px;--r-xl:36px;
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  --spring-soft:cubic-bezier(.25,.46,.45,.94);
+  --shadow-lift:0 1px 2px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.06);
+  --shadow-green:0 1px 2px rgba(34,197,94,.12),0 6px 18px rgba(34,197,94,.22);
+  --ios-card-shadow:0 1px 2px rgba(0,0,0,.04),0 4px 12px rgba(0,0,0,.06);
+  --ios-press:scale(.97);
+}
+html{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter',system-ui,sans-serif;background:var(--ca-bg);color:var(--ca-ink);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility}
+body{min-height:100dvh;padding-bottom:calc(84px + env(safe-area-inset-bottom));overflow-x:hidden;background:var(--ca-bg);position:relative}
+/* Fill only the iOS safe-area-top with the hero's start color so the status bar blends */
+body::before{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top, 0);background:#22e060;z-index:5;pointer-events:none}
+button,a,.tile,.card,.chip,.pill,.row,.qc-card,.ending-card{transition-timing-function:var(--spring)}
+button{min-height:44px}
+input,select,textarea{font-size:16px}
+
+.shell{max-width:480px;margin:0 auto;position:relative}
+
+/* HERO */
+.hero{background:var(--ca-green);padding:20px 24px 56px;position:relative;border-bottom-left-radius:32px;border-bottom-right-radius:32px;overflow:hidden;box-shadow:0 1px 2px rgba(34,197,94,.08),0 8px 20px rgba(34,197,94,.14)}
+.hero::before{content:"";position:absolute;width:420px;height:420px;top:-180px;right:-120px;background:radial-gradient(circle,rgba(255,255,255,.18),transparent 62%);pointer-events:none}
+.hero-topbar{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.avatar{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:15px;backdrop-filter:blur(10px);border:1.5px solid rgba(255,255,255,.3)}
+.hero-brand{display:flex;align-items:center;gap:8px;color:#fff;font-weight:800;font-size:17px;letter-spacing:-.01em}
+.hero-brand .dollar{width:28px;height:28px;border-radius:50%;background:#fff;color:var(--ca-green);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:17px}
+.icon-btn{width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;color:#fff;backdrop-filter:blur(10px)}
+.icon-btn:active{transform:scale(.92)}
+.icon-btn svg{width:20px;height:20px}
+.hero-label{margin-top:34px;font-size:13px;font-weight:600;color:rgba(255,255,255,.82);letter-spacing:.01em;text-align:center}
+/* Hero amount auto-scales to fit the phone frame; never overflows */
+.hero-amount{margin-top:4px;display:flex;align-items:flex-start;justify-content:center;color:#fff;font-weight:900;letter-spacing:-.055em;line-height:.9;width:100%;max-width:100%;padding:0 12px;box-sizing:border-box;overflow:hidden}
+.hero-amount .currency{font-size:clamp(28px, 9vw, 44px);margin-top:clamp(7px, 2.4vw, 12px);margin-right:4px;opacity:.92;flex-shrink:0}
+.hero-amount .whole{font-size:clamp(54px, 19vw, 96px);font-feature-settings:"tnum" 1;font-variant-numeric:tabular-nums;flex-shrink:1;min-width:0}
+.hero-amount .cents{font-size:clamp(28px, 9vw, 44px);margin-top:clamp(7px, 2.4vw, 12px);opacity:.78;flex-shrink:0}
+.hero-sub{margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;color:rgba(255,255,255,.92);font-size:14px;font-weight:600}
+.hero-sub .dot{width:6px;height:6px;border-radius:50%;background:#fff;animation:blink 1.6s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.hero-ctas{display:flex;gap:10px;margin-top:22px}
+.hero-cta{flex:1;height:52px;border-radius:16px;border:none;background:#fff;color:var(--ca-green);font-weight:800;font-size:15px;letter-spacing:-.01em;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .35s var(--spring),background .2s ease,box-shadow .2s;box-shadow:var(--ios-card-shadow),inset 0 1px 0 rgba(255,255,255,.7)}
+.hero-cta:hover{box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.7)}
+.hero-cta.ghost{background:rgba(255,255,255,.22);color:#fff;backdrop-filter:blur(10px)}
+.hero-cta:active{transform:var(--ios-press)}
+.hero-cta svg{width:18px;height:18px}
+
+/* SECTIONS */
+.section{padding:24px 20px 0}
+.section-head{display:flex;align-items:center;justify-content:space-between;padding:0 4px;margin-bottom:14px}
+.section-title{font-size:20px;font-weight:800;letter-spacing:-.02em;color:var(--ca-ink)}
+.section-more{color:var(--ca-ink);font-size:13px;font-weight:700;cursor:pointer;text-decoration:none;background:var(--ca-surface);border:1px solid var(--ca-border);padding:7px 14px 7px 12px;border-radius:99px;font-family:inherit;display:inline-flex;align-items:center;gap:5px;transition:transform .2s var(--spring)}
+.section-more::after{content:"\25BE";font-size:11px;color:var(--ca-gray);margin-left:1px}
+.section-more:active{transform:scale(.96)}
+
+/* TILES */
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tile{aspect-ratio:1.05/1;border-radius:20px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;cursor:pointer;position:relative;overflow:hidden;color:#fff;border:none;text-align:left;transition:transform .35s var(--spring),box-shadow .25s;box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.15)}
+.tile:hover{transform:translateY(-2px);box-shadow:0 1px 2px rgba(0,0,0,.06),0 8px 20px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.15)}
+.tile:active{transform:var(--ios-press)}
+.tile-icon{width:44px;height:44px;border-radius:14px;background:rgba(255,255,255,.24);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px)}
+.tile-icon svg{width:22px;height:22px;fill:#fff}
+.tile-title{font-weight:800;font-size:17px;line-height:1.15;letter-spacing:-.01em}
+.tile-sub{font-size:12px;font-weight:600;opacity:.85;margin-top:3px}
+.tile.green{background:linear-gradient(155deg,#22c55e 0%,#16a34a 100%)}
+.tile.blue{background:linear-gradient(155deg,#3B82F6 0%,#1E40AF 100%)}
+.tile.orange{background:linear-gradient(155deg,#FF6B35 0%,#E03E00 100%)}
+.tile.purple{background:linear-gradient(155deg,#8B5CF6 0%,#5B21B6 100%)}
+.tile::after{content:"";position:absolute;inset:auto -30px -40px auto;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.1);pointer-events:none}
+
+/* QUICK CLAIM */
+.hscroll{display:flex;gap:12px;overflow-x:auto;padding:0 20px 6px;margin:0 -20px;scroll-snap-type:x mandatory;scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;mask-image:linear-gradient(to right, black 0, black calc(100% - 36px), transparent 100%);-webkit-mask-image:linear-gradient(to right, black 0, black calc(100% - 36px), transparent 100%);animation:hscrollHint 1.6s ease-out 0.6s 1 both}
+@keyframes hscrollHint{
+  0%   { transform: translateX(0) }
+  20%  { transform: translateX(-22px) }
+  60%  { transform: translateX(8px) }
+  100% { transform: translateX(0) }
+}
+.hscroll::-webkit-scrollbar{display:none}
+.qc-card{flex:0 0 72%;max-width:260px;background:#fff;border-radius:20px;padding:16px;scroll-snap-align:start;cursor:pointer;transition:transform .35s var(--spring),box-shadow .25s;border:1px solid var(--ca-border);position:relative;box-shadow:var(--ios-card-shadow)}
+.qc-card:hover{transform:translateY(-2px);box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.08)}
+.qc-card:active{transform:scale(.97)}
+.qc-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(0,214,50,.12);color:var(--ca-green-dark);font-size:11px;font-weight:800;letter-spacing:.01em;padding:6px 10px;border-radius:12px;text-transform:none}
+.qc-tag .pulse{width:6px;height:6px;border-radius:50%;background:var(--ca-green);animation:blink 1.6s infinite}
+.qc-name{margin-top:10px;font-weight:800;font-size:15px;letter-spacing:-.01em;color:var(--ca-ink);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:38px}
+.qc-amount{margin-top:12px;font-size:28px;font-weight:900;letter-spacing:-.03em;color:var(--ca-green)}
+.qc-meta{font-size:12px;font-weight:600;color:var(--ca-gray);margin-top:2px}
+.qc-btn{margin-top:16px;width:100%;height:44px;border-radius:14px;border:none;background:var(--ca-ink);color:#fff;font-weight:800;font-size:13px;cursor:pointer;transition:transform .3s var(--spring),background .2s ease,box-shadow .2s;box-shadow:var(--ios-card-shadow),inset 0 1px 0 rgba(255,255,255,.1)}
+.qc-btn:hover{box-shadow:0 1px 2px rgba(0,0,0,.06),0 6px 16px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.12)}
+.qc-btn:active{transform:var(--ios-press);background:var(--ca-ink-2)}
+.qc-btn.claimed{background:var(--ca-surface-2);color:var(--ca-gray)}
+.qc-blur .qc-name,.qc-blur .qc-amount,.qc-blur .qc-meta{filter:blur(5px);user-select:none}
+
+/* LIST */
+.list{display:flex;flex-direction:column;gap:10px}
+.row{display:flex;align-items:center;gap:14px;padding:16px;border-radius:20px;background:#fff;cursor:pointer;transition:transform .35s var(--spring),background .2s ease,box-shadow .2s;border:1px solid var(--ca-border);box-shadow:var(--ios-card-shadow)}
+.row:hover{transform:translateY(-1px);box-shadow:0 1px 2px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.08)}
+.row:active{transform:var(--ios-press);background:var(--ca-surface-2)}
+.row-logo{width:54px;height:54px;border-radius:18px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:20px;letter-spacing:-.02em;box-shadow:0 4px 10px rgba(0,0,0,.08)}
+.row-body{flex:1;min-width:0}
+.row-name{font-weight:800;font-size:16px;letter-spacing:-.01em;color:var(--ca-ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-desc{font-size:13px;color:var(--ca-gray);margin-top:2px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0}
+.row-amount{font-weight:900;font-size:19px;letter-spacing:-.02em;color:var(--ca-green)}
+.row-pill{background:var(--ca-ink);color:#fff;font-size:11px;font-weight:800;padding:6px 12px;border-radius:99px;border:none;cursor:pointer;letter-spacing:.01em;transition:transform .3s var(--spring),background .2s ease}
+.row-pill:active{transform:scale(.92);background:var(--ca-ink-2)}
+.row-pill.claimed{background:var(--ca-surface-2);color:var(--ca-gray)}
+.row-pill.locked{background:linear-gradient(155deg,#8B5CF6,#5B21B6)}
+.row.blurred .row-name,.row.blurred .row-desc{filter:blur(5px);user-select:none}
+
+/* LOGO COLORS */
+.lg-green{background:linear-gradient(155deg,#22c55e,#16a34a)}
+.lg-blue{background:linear-gradient(155deg,#3B82F6,#1E40AF)}
+.lg-orange{background:linear-gradient(155deg,#FF6B35,#E03E00)}
+.lg-purple{background:linear-gradient(155deg,#8B5CF6,#5B21B6)}
+.lg-pink{background:linear-gradient(155deg,#FF3CA0,#D9196A)}
+.lg-yellow{background:linear-gradient(155deg,#FFD400,#E0A800);color:#101010}
+.lg-red{background:linear-gradient(155deg,#FF4949,#C81E1E)}
+.lg-ink{background:linear-gradient(155deg,#1F2937,#000)}
+
+/* ENDING SOON */
+.ending-card{display:flex;align-items:center;gap:14px;padding:16px;border-radius:20px;background:#fff;border:1px solid var(--ca-border);box-shadow:var(--ios-card-shadow);cursor:pointer;transition:transform .35s var(--spring),border-color .2s}
+.ending-card:active{transform:var(--ios-press)}
+.ending-card:hover{border-color:var(--ca-green)}
+.ending-days{width:62px;height:62px;flex-shrink:0;border-radius:18px;background:linear-gradient(155deg,#FFEDD5,#FED7AA);display:flex;flex-direction:column;align-items:center;justify-content:center;color:#C2410C}
+.ending-days.urgent{background:linear-gradient(155deg,#FEE2E2,#FECACA);color:#B91C1C}
+.ending-days .n{font-size:24px;font-weight:900;line-height:1;letter-spacing:-.03em}
+.ending-days .u{font-size:10px;font-weight:800;margin-top:2px;text-transform:uppercase;letter-spacing:.06em}
+.ending-body{flex:1;min-width:0}
+.ending-name{font-weight:800;font-size:15px;color:var(--ca-ink);letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ending-meta{display:flex;align-items:center;gap:10px;margin-top:4px;font-size:12px;color:var(--ca-gray);font-weight:600}
+.ending-meta .dot{width:3px;height:3px;border-radius:50%;background:var(--ca-gray-2)}
+.ending-amount{font-weight:900;color:var(--ca-green);font-size:15px}
+.ending-card.blurred .ending-name,.ending-card.blurred .ending-meta{filter:blur(5px);user-select:none}
+
+/* PRO CARD */
+.pro-card{margin:28px 20px 0;border-radius:24px;padding:28px 24px;background:var(--ca-ink);color:#fff;position:relative;overflow:hidden;cursor:pointer;transition:transform .4s var(--spring),box-shadow .25s;border:none;width:calc(100% - 40px);text-align:left;box-shadow:0 1px 2px rgba(0,0,0,.14),0 10px 24px rgba(0,0,0,.18),inset 0 1px 0 rgba(255,255,255,.08)}
+.pro-card:hover{transform:translateY(-2px);box-shadow:0 1px 2px rgba(0,0,0,.16),0 14px 30px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.08)}
+.pro-card:active{transform:var(--ios-press)}
+.pro-card::before{content:"";position:absolute;width:280px;height:280px;border-radius:50%;top:-120px;right:-100px;background:radial-gradient(circle,rgba(0,214,50,.35),transparent 60%);pointer-events:none}
+.pro-tag{display:inline-flex;align-items:center;gap:6px;background:var(--ca-green);color:#000;font-size:11px;font-weight:900;letter-spacing:.01em;padding:6px 12px;border-radius:12px;text-transform:none}
+.pro-title{margin-top:14px;font-size:26px;font-weight:900;letter-spacing:-.025em;line-height:1.1}
+.pro-desc{margin-top:8px;color:rgba(255,255,255,.75);font-size:14px;line-height:1.5;font-weight:500;max-width:260px}
+.pro-perks{margin-top:18px;display:flex;flex-direction:column;gap:10px}
+.pro-perk{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600;color:#fff}
+.pro-perk .check{width:22px;height:22px;border-radius:50%;background:var(--ca-green);color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;flex-shrink:0}
+.pro-btn{display:flex;align-items:center;justify-content:center;margin-top:24px;width:100%;height:52px;border-radius:16px;border:none;background:linear-gradient(180deg,#22c55e 0%,#16a34a 100%);color:#fff;font-weight:900;font-size:15px;letter-spacing:-.01em;cursor:pointer;transition:transform .3s var(--spring),box-shadow .2s;box-shadow:0 1px 2px rgba(34,197,94,.18),0 6px 16px rgba(34,197,94,.28),inset 0 1px 0 rgba(255,255,255,.25)}
+.pro-btn:hover{box-shadow:0 1px 2px rgba(34,197,94,.20),0 8px 20px rgba(34,197,94,.34),inset 0 1px 0 rgba(255,255,255,.25)}
+.pro-btn:active{transform:var(--ios-press)}
+.pro-card.pro-active{background:linear-gradient(155deg,#003e0f,#000)}
+.pro-restore-link{display:block;margin-top:14px;text-align:center;color:rgba(255,255,255,.45);font-size:12px;text-decoration:underline;cursor:pointer;background:none;border:none;width:100%}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:100%;max-width:480px;background:rgba(255,255,255,.88);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border-top:1px solid rgba(232,233,235,.78);padding:10px 0 calc(14px + env(safe-area-inset-bottom));display:flex;justify-content:space-around;align-items:center;z-index:20}
+.nav-btn{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 16px;color:var(--ca-gray);font-size:10px;font-weight:700;letter-spacing:.02em;font-family:inherit;transition:color .2s ease,transform .3s var(--spring)}
+.nav-btn svg{width:26px;height:26px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav-btn.active{color:var(--ca-ink)}
+.nav-btn.active svg{fill:currentColor;stroke:currentColor}
+.nav-btn:active{transform:scale(.88)}
+.nav-fab{width:56px;height:56px;border-radius:50%;background:var(--ca-green);display:flex;align-items:center;justify-content:center;border:none;cursor:pointer;color:#fff;box-shadow:var(--shadow-green);transform:translateY(-14px);transition:transform .35s var(--spring)}
+.nav-fab:active{transform:translateY(-14px) scale(.9)}
+.nav-fab svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2.5;stroke-linecap:round}
+
+/* TOAST */
+.toast{position:fixed;left:50%;top:36px;transform:translate(-50%,-120%) scale(.95);background:var(--ca-ink);color:#fff;padding:14px 22px;border-radius:16px;font-weight:700;font-size:14px;letter-spacing:-.005em;display:flex;align-items:center;gap:10px;box-shadow:0 1px 2px rgba(0,0,0,.18),0 10px 24px rgba(0,0,0,.22);z-index:50;opacity:0;pointer-events:none;transition:transform .55s var(--spring),opacity .3s ease;max-width:calc(100% - 40px)}
+.toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
+.toast .check{width:22px;height:22px;border-radius:50%;background:var(--ca-green);color:#000;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px}
+
+/* FILTERS */
+.chips{display:flex;gap:8px;overflow-x:auto;padding:0 20px 4px;margin:0 -20px;scrollbar-width:none;-webkit-overflow-scrolling:touch;position:relative;mask-image:linear-gradient(to right, black calc(100% - 32px), transparent 100%);-webkit-mask-image:linear-gradient(to right, black calc(100% - 32px), transparent 100%)}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:0 0 auto;min-height:36px;padding:8px 16px;border-radius:14px;border:1px solid var(--ca-border);background:var(--ca-surface);color:var(--ca-gray);font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;transition:transform .25s var(--spring),background .2s,color .2s,border-color .2s;letter-spacing:0}
+.chip.active{background:var(--ca-ink);color:#fff;border-color:var(--ca-ink);box-shadow:var(--ios-card-shadow),inset 0 1px 0 rgba(255,255,255,.1)}
+.chip:active{transform:var(--ios-press)}
+
+/* NAME SEARCH PANEL */
+.search-panel{margin:16px 20px 0;background:#fff;border:1px solid var(--ca-border);border-radius:20px;padding:20px;box-shadow:var(--ios-card-shadow)}
+.search-panel-head{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.search-panel-icon{width:40px;height:40px;border-radius:12px;background:linear-gradient(155deg,#7C3AED,#4C1D95);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:18px}
+.search-panel-icon svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:2.3;stroke-linecap:round}
+.search-panel-title{font-size:15px;font-weight:800;color:var(--ca-ink);letter-spacing:-.01em}
+.search-panel-sub{font-size:12px;color:var(--ca-gray);margin-top:1px}
+.search-inputs{display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.search-inputs input,.search-inputs select{flex:1;min-width:120px;min-height:44px;padding:12px 14px;border:1px solid var(--ca-border);border-radius:12px;font-size:16px;background:var(--ca-surface);color:var(--ca-ink);outline:none;font-family:inherit;box-shadow:inset 0 1px 1px rgba(0,0,0,.03)}
+.search-inputs input:focus,.search-inputs select:focus{border-color:var(--ca-green)}
+.search-btn{width:100%;min-height:44px;padding:12px 16px;border:none;border-radius:14px;background:var(--ca-ink);color:#fff;font-size:15px;font-weight:800;cursor:pointer;transition:transform .3s var(--spring),box-shadow .2s;font-family:inherit;box-shadow:var(--ios-card-shadow)}
+.search-btn:active{transform:var(--ios-press)}
+.search-results{margin-top:14px;display:none}
+
+/* DEADLINES PANEL */
+.deadline-panel{margin:16px 20px 0;background:#fff;border:1px solid var(--ca-border);border-radius:20px;overflow:hidden;box-shadow:var(--ios-card-shadow)}
+.deadline-head{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;cursor:pointer;border:none;background:none;width:100%;font-family:inherit}
+.deadline-head-left{display:flex;align-items:center;gap:10px}
+.deadline-icon{width:36px;height:36px;border-radius:12px;background:linear-gradient(155deg,#FF6B6B,#D92D20);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:15px;flex-shrink:0}
+.deadline-title{font-size:15px;font-weight:800;color:var(--ca-ink);letter-spacing:-.01em}
+.deadline-count{display:inline-flex;align-items:center;justify-content:center;min-width:22px;height:22px;padding:0 7px;border-radius:11px;background:var(--ca-red);color:#fff;font-size:11px;font-weight:800}
+.deadline-chevron{font-size:13px;color:var(--ca-gray);transition:transform .3s var(--spring);font-weight:700}
+.deadline-chevron.open{transform:rotate(180deg)}
+.deadline-list{overflow:hidden;max-height:0;transition:max-height .4s var(--spring-soft);padding:0 14px}
+.deadline-list.open{max-height:2000px;padding:0 14px 14px}
+.deadline-item{padding:14px;background:var(--ca-surface);border-radius:16px;margin-top:10px}
+.deadline-item-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.deadline-item-name{font-size:14px;font-weight:700;color:var(--ca-ink);line-height:1.35}
+.deadline-badge{font-size:10px;font-weight:900;padding:4px 10px;border-radius:12px;white-space:nowrap;flex-shrink:0;text-transform:none;letter-spacing:.01em}
+.deadline-badge.critical{background:rgba(255,73,73,.12);color:#B91C1C}
+.deadline-badge.warning{background:rgba(255,107,53,.14);color:#C2410C}
+.deadline-meta{display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap;font-size:12px;color:var(--ca-gray);font-weight:600}
+.deadline-amount{color:var(--ca-green);font-weight:900;font-size:14px}
+.deadline-claim-btn{margin-top:12px;min-height:44px;padding:10px 16px;border-radius:14px;border:none;background:var(--ca-ink);color:#fff;font-size:12px;font-weight:800;cursor:pointer;transition:transform .3s var(--spring);font-family:inherit}
+.deadline-claim-btn:active{transform:var(--ios-press)}
+.deadline-claim-btn.locked{background:linear-gradient(155deg,#8B5CF6,#5B21B6)}
+.deadline-item.blurred .deadline-item-name,.deadline-item.blurred .deadline-meta{filter:blur(5px);user-select:none}
+
+/* NOTIF BAR */
+.notif-bar{margin:16px 20px 0;background:#fff;border:1px solid var(--ca-border);border-radius:20px;padding:16px;display:none;align-items:center;justify-content:space-between;gap:12px;box-shadow:var(--ios-card-shadow)}
+.notif-bar.show{display:flex}
+.notif-left{display:flex;align-items:center;gap:10px}
+.notif-icon{width:36px;height:36px;border-radius:12px;background:linear-gradient(155deg,#60A5FA,#2563EB);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:16px;flex-shrink:0}
+.notif-icon svg{stroke:#fff}
+.notif-label{font-size:14px;font-weight:800;color:var(--ca-ink)}
+.notif-sub{font-size:11px;color:var(--ca-gray);margin-top:1px}
+.toggle-switch{position:relative;width:44px;height:26px;cursor:pointer;flex-shrink:0}
+.toggle-switch input{opacity:0;width:0;height:0}
+.toggle-track{position:absolute;inset:0;background:#CBD5E1;border-radius:13px;transition:background .25s}
+.toggle-track::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;background:#fff;border-radius:50%;transition:transform .3s var(--spring);box-shadow:0 2px 6px rgba(0,0,0,.2)}
+.toggle-switch input:checked+.toggle-track{background:var(--ca-green)}
+.toggle-switch input:checked+.toggle-track::after{transform:translateX(18px)}
+
+/* EMPTY */
+.empty{text-align:center;padding:28px 16px;color:var(--ca-gray);background:var(--ca-surface);border-radius:20px}
+.empty-icon{font-size:2rem;margin-bottom:10px;opacity:.5;font-weight:900;color:var(--ca-ink)}
+.empty-title{font-size:15px;font-weight:800;color:var(--ca-ink)}
+.empty-desc{font-size:13px;margin-top:4px}
+
+/* SKELETON */
+.skeleton{background:linear-gradient(90deg,var(--ca-surface) 25%,var(--ca-surface-2) 50%,var(--ca-surface) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:22px;height:82px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ANIM */
+@keyframes pop{0%{opacity:0;transform:translateY(14px) scale(.96)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.anim{animation:pop .55s var(--spring) both}
+.anim-delay-1{animation-delay:.05s}.anim-delay-2{animation-delay:.12s}.anim-delay-3{animation-delay:.2s}.anim-delay-4{animation-delay:.28s}.anim-delay-5{animation-delay:.36s}
+@keyframes flick{0%{opacity:.6}100%{opacity:1}}
+
+/* MODAL */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:9999;display:flex;align-items:flex-end;justify-content:center;padding:0;backdrop-filter:blur(12px) saturate(120%);-webkit-backdrop-filter:blur(12px) saturate(120%);opacity:0;transition:opacity .25s ease}
+.modal-backdrop.show{opacity:1}
+.modal{background:#fff;border-radius:28px 28px 0 0;padding:28px 24px calc(24px + env(safe-area-inset-bottom));max-width:480px;width:100%;transform:translateY(100%);transition:transform .45s var(--spring);box-shadow:0 1px 2px rgba(0,0,0,.12),0 -8px 28px rgba(0,0,0,.16)}
+.modal-backdrop.show .modal{transform:translateY(0)}
+.modal-handle{width:44px;height:4px;background:var(--ca-surface-2);border-radius:99px;margin:-14px auto 18px}
+.modal-icon{width:64px;height:64px;border-radius:20px;background:linear-gradient(155deg,#22c55e,#16a34a);display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#fff;margin:0 auto 14px;box-shadow:var(--shadow-green)}
+.modal-title{font-size:22px;font-weight:900;color:var(--ca-ink);letter-spacing:-.02em;text-align:center}
+.modal-sub{font-size:14px;color:var(--ca-gray);margin-top:8px;text-align:center;line-height:1.5;font-weight:500}
+.modal-price{font-size:36px;font-weight:900;color:var(--ca-green);text-align:center;margin-top:20px;letter-spacing:-.04em}
+.modal-price .per{font-size:14px;color:var(--ca-gray);font-weight:600}
+.modal-trial{font-size:12px;color:var(--ca-gray);text-align:center;margin-top:2px;font-weight:600}
+.modal-cta{width:100%;min-height:44px;padding:14px 16px;border-radius:16px;border:none;background:var(--ca-ink);color:#fff;font-size:15px;font-weight:900;cursor:pointer;margin-top:18px;transition:transform .3s var(--spring),box-shadow .2s;font-family:inherit;box-shadow:var(--ios-card-shadow)}
+.modal-cta:active{transform:var(--ios-press)}
+.modal-sec{font-size:11px;color:var(--ca-gray);text-align:center;margin-top:10px;font-weight:600}
+.modal-close{width:100%;min-height:44px;padding:12px;border:none;background:transparent;color:var(--ca-gray);cursor:pointer;font-size:13px;font-weight:600;margin-top:4px;font-family:inherit}
+.modal-restore{display:block;width:100%;padding:14px;border-radius:26px;border:1.5px solid var(--ca-border);background:var(--ca-surface);color:var(--ca-ink);font-size:14px;font-weight:800;cursor:pointer;margin-top:10px;font-family:inherit;transition:transform .25s var(--spring),background .15s}
+.modal-restore:active{transform:scale(.97);background:var(--ca-surface-2)}
+.modal-input{width:100%;min-height:44px;padding:12px 14px;border-radius:12px;border:1px solid var(--ca-border);background:var(--ca-surface);color:var(--ca-ink);font-size:16px;margin-top:8px;outline:none;font-family:inherit;box-shadow:inset 0 1px 1px rgba(0,0,0,.03)}
+.modal-input:focus{border-color:var(--ca-green)}
+.modal-err{color:var(--ca-red);font-size:12px;margin-top:6px;text-align:center;font-weight:600}
+
+/* FOOTER */
+.footer{text-align:center;padding:24px 20px;color:var(--ca-gray);font-size:11px;letter-spacing:.05em;text-transform:uppercase;margin-top:8px}
+.footer-brand{font-weight:800;color:var(--ca-green)}
+
+/* INLINE UPGRADE CARD */
+.upgrade-inline{margin:8px 20px 0;padding:16px;border-radius:20px;background:linear-gradient(155deg,rgba(0,214,50,.08),rgba(0,214,50,.02));border:1px solid rgba(0,214,50,.2);text-align:center;box-shadow:var(--ios-card-shadow)}
+.upgrade-inline-text{font-size:13px;font-weight:700;color:var(--ca-ink);margin-bottom:10px}
+.upgrade-inline-btn{min-height:44px;padding:10px 22px;border-radius:14px;border:none;background:linear-gradient(180deg,#22c55e,#16a34a);color:#fff;font-size:13px;font-weight:900;cursor:pointer;font-family:inherit;box-shadow:0 1px 2px rgba(34,197,94,.18),0 6px 16px rgba(34,197,94,.28),inset 0 1px 0 rgba(255,255,255,.25);transition:transform .2s var(--spring),box-shadow .2s}
+.upgrade-inline-btn:hover{transform:translateY(-1px);box-shadow:0 1px 2px rgba(34,197,94,.20),0 8px 20px rgba(34,197,94,.34),inset 0 1px 0 rgba(255,255,255,.25)}
+.upgrade-inline-btn:active{transform:var(--ios-press)}
+
+/* ==========================================================
+   CASH APP DEEPER — receipts, cash-card gradients, burst fx
+   ========================================================== */
+
+/* Tabular monospace for every dollar amount */
+.hero-amount .whole,.hero-amount .currency,.hero-amount .cents,
+.qc-amount,.row-amount,.ending-amount,.deadline-amount,.modal-price{
+  font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',system-ui,sans-serif;
+  font-feature-settings:"tnum" 1;
+  font-variant-numeric:tabular-nums;
+  letter-spacing:-.04em
+}
+
+/* Hero: subtle grain + dollar float-up ambient */
+.hero{background:linear-gradient(180deg,#22e060 0%,#22c55e 42%,#14853f 100%)}
+.hero::after{content:"";position:absolute;inset:0;background-image:radial-gradient(circle at 20% 80%,rgba(255,255,255,.08) 0%,transparent 50%),radial-gradient(circle at 80% 20%,rgba(0,0,0,.15) 0%,transparent 50%);pointer-events:none;mix-blend-mode:overlay}
+.hero-amount{position:relative;z-index:1}
+.hero-amount.pulse{animation:amountPulse .55s var(--spring)}
+@keyframes amountPulse{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.06)}
+  70%{transform:scale(.985)}
+  100%{transform:scale(1)}
+}
+
+/* CASH CARD gradients on tiles — multi-stop, diagonal gloss, etched $CASH */
+.tile{background-size:200% 200%;background-position:0% 0%;position:relative}
+.tile.green{background:linear-gradient(135deg,#22c55e 0%,#16a34a 45%,#064e3b 100%)}
+.tile.blue{background:linear-gradient(135deg,#7DB7FF 0%,#3B82F6 48%,#1D4ED8 100%)}
+.tile.orange{background:linear-gradient(135deg,#FFC48C 0%,#FF7A45 48%,#C2410C 100%)}
+.tile.purple{background:linear-gradient(135deg,#CDBDFF 0%,#8B5CF6 48%,#5B21B6 100%)}
+.tile::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(115deg,rgba(255,255,255,.22) 0%,rgba(255,255,255,0) 38%,rgba(255,255,255,0) 62%,rgba(255,255,255,.08) 100%);pointer-events:none;z-index:1}
+.tile > *{position:relative;z-index:2}
+.tile::after{content:"$";position:absolute;bottom:-8px;right:10px;font-family:'JetBrains Mono',monospace;font-size:92px;font-weight:800;color:rgba(255,255,255,.08);line-height:1;letter-spacing:-.06em;pointer-events:none;z-index:1;inset:auto 10px -8px auto;width:auto;height:auto;border-radius:0;background:none}
+.tile:hover{background-position:100% 100%;transition:background-position .6s ease}
+
+/* RECEIPT ROWS — perforated edges, monospace, transaction-id look */
+.row{background:#fff;position:relative;padding:18px 16px 16px;border-radius:20px;border:none;box-shadow:var(--ios-card-shadow);overflow:hidden}
+.row::before,.row::after{content:"";position:absolute;left:0;right:0;height:10px;background-image:radial-gradient(circle at 5px 5px,var(--ca-bg) 3.5px,transparent 4px);background-size:10px 10px;background-repeat:repeat-x;background-color:transparent;pointer-events:none}
+.row::before{top:-5px}
+.row::after{bottom:-5px}
+.row-receipt-id{position:absolute;top:6px;right:14px;font-family:'JetBrains Mono',monospace;font-size:10px;font-weight:700;color:var(--ca-gray);letter-spacing:.1em;text-transform:uppercase}
+.row-logo{border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.08),inset 0 1px 0 rgba(255,255,255,.25)}
+.row-name{font-weight:800}
+.row-desc{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.02em;text-transform:uppercase;color:var(--ca-gray);font-weight:600}
+.row-amount{font-size:20px;font-weight:800;color:var(--ca-green)}
+.row-amount::before{content:"+ ";color:var(--ca-green);opacity:.7;font-weight:600}
+.row-pill{min-height:32px;background:linear-gradient(180deg,#22c55e,#16a34a);color:#fff;padding:6px 14px;font-weight:900;letter-spacing:.01em;box-shadow:0 1px 2px rgba(34,197,94,.14),0 4px 12px rgba(34,197,94,.22),inset 0 1px 0 rgba(255,255,255,.2)}
+.row-pill:hover{box-shadow:0 1px 2px rgba(34,197,94,.16),0 6px 16px rgba(34,197,94,.28),inset 0 1px 0 rgba(255,255,255,.25)}
+.row-pill.claimed{background:var(--ca-surface-2);color:var(--ca-gray);box-shadow:none}
+.row-pill.claimed::before{content:"✓ "}
+.row-pill.locked{background:linear-gradient(180deg,#7C3AED,#4C1D95);box-shadow:0 1px 2px rgba(124,58,237,.14),0 4px 12px rgba(124,58,237,.24),inset 0 1px 0 rgba(255,255,255,.2)}
+/* REPORT INACCURACY — bottom-left corner of each row, clear of logo + Claim pill */
+.row{padding-bottom:34px}
+.row-report{position:absolute;bottom:8px;left:14px;background:transparent;border:none;color:var(--ca-gray);font-size:10px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;padding:4px 6px;opacity:.45;transition:opacity .2s ease,color .2s ease;z-index:2}
+.row-report:hover{opacity:1;color:#C2410C}
+.row-report:active{transform:scale(.96)}
+/* Live indicator pulse */
+@keyframes livePulse{
+  0%{box-shadow:0 0 0 0 rgba(34,224,96,.7)}
+  60%{box-shadow:0 0 0 10px rgba(34,224,96,0)}
+  100%{box-shadow:0 0 0 0 rgba(34,224,96,0)}
+}
+
+/* QUICK-CLAIM cards → mini receipts */
+.qc-card{position:relative;overflow:hidden;border-radius:20px}
+.qc-card::before,.qc-card::after{content:"";position:absolute;left:0;right:0;height:8px;background-image:radial-gradient(circle at 4px 4px,var(--ca-bg) 3px,transparent 3.5px);background-size:8px 8px;background-repeat:repeat-x;pointer-events:none}
+.qc-card::before{top:-4px}
+.qc-card::after{bottom:-4px}
+.qc-amount{font-weight:800}
+.qc-amount::before{content:"+ ";opacity:.6;font-weight:600}
+
+/* Haptic press feel — green halo flash + deeper scale */
+.row:active,.qc-card:active,.tile:active,.hero-cta:active,.qc-btn:active,.row-pill:active,.deadline-claim-btn:active,.nav-btn:active{filter:brightness(1.02)}
+.row-pill.pressed,.qc-btn.pressed,.deadline-claim-btn.pressed{animation:hapticFlash .5s var(--spring)}
+@keyframes hapticFlash{
+  0%{box-shadow:0 4px 10px rgba(34,197,94,.35)}
+  50%{box-shadow:0 0 0 14px rgba(34,197,94,.25),0 4px 10px rgba(34,197,94,.35)}
+  100%{box-shadow:0 4px 10px rgba(34,197,94,.35)}
+}
+
+/* CASH BURST — dollar signs rain up on claim */
+.cash-burst{position:fixed;pointer-events:none;z-index:9998;font-family:'JetBrains Mono',monospace;font-weight:900;color:var(--ca-green);text-shadow:0 2px 8px rgba(34,197,94,.4);will-change:transform,opacity}
+@keyframes cashFly{
+  0%{transform:translate(0,0) scale(.6) rotate(0deg);opacity:0}
+  15%{opacity:1}
+  100%{transform:translate(var(--dx),var(--dy)) scale(1.1) rotate(var(--rot));opacity:0}
+}
+
+/* CASHED! ribbon toast */
+.toast.cashed{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 1px 2px rgba(34,197,94,.18),0 10px 24px rgba(34,197,94,.30)}
+.toast.cashed .check{background:#fff;color:var(--ca-green)}
+
+/* List stays single-column at all sizes — the .row layout is a horizontal strip
+   (logo + name + description + amount + button) and breaks in a multi-col grid */
+.list{display:flex;flex-direction:column;gap:12px}
+.list .empty,.list .skeleton{width:100%}
+
+/* A11Y — keyboard focus ring, reduced-motion respect */
+:focus{outline:none}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,
+.row:focus-visible,.qc-card:focus-visible,.tile:focus-visible,.ending-card:focus-visible,
+.pro-card:focus-visible,.nav-btn:focus-visible,.chip:focus-visible{
+  outline:3px solid var(--ca-green);
+  outline-offset:3px;
+  border-radius:inherit
+}
+.icon-btn:focus-visible,.avatar:focus-visible{outline-color:#fff;outline-offset:3px}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important
+  }
+  .cash-burst{display:none !important}
+  .hero-amount.pulse{animation:none !important}
+}
+
+/* TABLET (>=520px) — centered app shell */
+@media(min-width:520px){
+  body{background:#E8E9EB}
+  .shell{box-shadow:0 24px 60px rgba(0,0,0,.12);min-height:100dvh;background:#fff}
+  .bottom-nav{border-radius:28px 28px 0 0}
+}
+
+/* TABLET LARGE (>=768px) — wider shell, 4-col tiles, bigger hero */
+@media(min-width:768px){
+  .shell{max-width:720px}
+  .hero{padding:22px 32px 60px;border-bottom-left-radius:48px;border-bottom-right-radius:48px}
+  .hero-amount .currency{font-size:52px}
+  .hero-amount .whole{font-size:112px}
+  .hero-amount .cents{font-size:52px}
+  .tiles{grid-template-columns:repeat(4,1fr);gap:14px}
+  .tile{aspect-ratio:1/1;padding:20px}
+  .qc-card{flex:0 0 44%;max-width:300px}
+  .bottom-nav{max-width:720px}
+  .modal{max-width:640px}
+}
+/* DESKTOP modal — let it breathe so rows have room for the full name + amount */
+@media(min-width:1024px){
+  .modal{max-width:760px}
+}
+
+/* DESKTOP (>=1024px) — dashboard feel, grid quick-claim, wider rows */
+@media(min-width:1024px){
+  body{background:#EFF0F2;padding-bottom:40px}
+  .shell{max-width:960px;background:#fff;border-radius:0 0 44px 44px;box-shadow:0 32px 80px rgba(0,0,0,.14),0 8px 20px rgba(0,0,0,.06);padding-bottom:20px;margin-top:24px;min-height:auto}
+  .hero{border-top-left-radius:0;border-top-right-radius:0;padding:28px 44px 72px;text-align:center}
+  .hero-topbar{margin-top:4px}
+  .hero-label{margin-top:44px;font-size:14px;text-align:center}
+  .hero-amount{justify-content:center}
+  .hero-amount .currency{font-size:60px;margin-top:14px}
+  .hero-amount .whole{font-size:128px}
+  .hero-amount .cents{font-size:60px;margin-top:14px}
+  .hero-sub{justify-content:center}
+  .hero-ctas{max-width:520px;gap:14px;margin:28px auto 0}
+  .hero-cta{height:56px;font-size:16px}
+  /* Section heads sit inside a padded content rail so titles line up with content */
+  .section-head{max-width:none}
+  .section{padding:28px 32px 0}
+  .section-title{font-size:22px}
+  .tiles{grid-template-columns:repeat(4,1fr);gap:16px}
+  .tile{padding:22px;border-radius:26px}
+  .tile-title{font-size:18px}
+  /* Quick-claim horizontal scroll becomes a 3-col grid */
+  .hscroll{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;overflow:visible;padding:0 32px;margin:0}
+  .qc-card{flex:none;max-width:none;min-width:0}
+  /* List rows get more breathing room */
+  .list{gap:12px}
+  .row{padding:16px 20px;border-radius:24px}
+  .row-name{font-size:17px}
+  .row-amount{font-size:20px}
+  /* Side panels span the full width cleanly */
+  .deadline-panel,.notif-bar,.search-panel{margin-left:32px;margin-right:32px}
+  .pro-card{margin:32px 32px 0;padding:32px 36px;width:calc(100% - 64px)}
+  .pro-title{font-size:30px}
+  .pro-desc{max-width:100%}
+  /* Bottom nav widens to match */
+  .bottom-nav{max-width:960px;border-radius:28px 28px 0 0}
+}
+
+/* BIG SCREEN (>=1280px) — even roomier */
+@media(min-width:1280px){
+  .shell{max-width:1100px}
+  .bottom-nav{max-width:1100px}
+  .hero-amount .whole{font-size:144px}
+  .hero-amount .currency,.hero-amount .cents{font-size:68px}
+  .tiles{gap:18px}
+}
+</style>
+</head>
+<body>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="check">&#10003;</span>
+  <span id="toastMsg">Done</span>
+</div>
+
+<div class="shell">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-topbar anim">
+      <div class="hero-brand">
+        <span class="dollar">$</span>
+        Free Money
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <button id="heroSignIn" type="button" aria-label="Sign in" style="background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.28);color:#fff;font-weight:800;font-size:12px;padding:8px 14px;border-radius:99px;cursor:pointer;font-family:inherit;backdrop-filter:blur(10px)">Sign in</button>
+        <button class="icon-btn" id="btnSearchOpen" aria-label="Search">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-label anim anim-delay-1">Available for you</div>
+    <div class="hero-amount anim anim-delay-2">
+      <span class="currency">$</span>
+      <span class="whole" id="heroWhole">0</span>
+      <span class="cents" id="heroCents">.00</span>
+    </div>
+    <div class="hero-sub anim anim-delay-3">
+      <span class="dot"></span>
+      <span><b id="heroMatches">0</b> claims &middot; <b id="heroNoProof">0</b> no proof &middot; <b id="heroPartial">0</b> partial proof</span>
+    </div>
+    <div class="anim anim-delay-4" style="margin-top:8px;font-size:10px;font-weight:600;color:rgba(255,255,255,.55);letter-spacing:.04em;text-transform:uppercase;text-align:center">Estimated max &middot; per-claim payout varies</div>
+    <div class="anim anim-delay-5 hero-live" style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:10px;font-weight:700;color:rgba(255,255,255,.78);letter-spacing:.05em;text-transform:uppercase;text-align:center">
+      <span class="live-dot" style="width:6px;height:6px;border-radius:50%;background:#22e060;box-shadow:0 0 0 0 rgba(34,224,96,.7);animation:livePulse 2s ease-out infinite"></span>
+      <span>Live scans &middot; new claims daily at 3 AM PT</span>
+    </div>
+
+  </section>
+
+  <!-- (Deadline Alerts panel + notif bar removed — Ending Soon tile replaces them) -->
+
+  <!-- ACTION TILES -->
+  <section class="section">
+    <div class="section-head">
+      <div class="section-title">Find your money</div>
+    </div>
+    <div class="tiles">
+      <button class="tile green anim anim-delay-1" id="tileBrowse" type="button">
+        <div class="tile-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1.2 15.5h-2.4v-1.2c-1.5-.3-2.8-1.2-2.9-3h1.8c.1.9.7 1.6 2.1 1.6 1.5 0 1.9-.8 1.9-1.3 0-.7-.4-1.3-2.2-1.8-2-.5-3.4-1.3-3.4-2.9 0-1.4 1.1-2.3 2.5-2.6V5.1h2.4v1.2c1.6.4 2.4 1.6 2.5 2.9h-1.8c0-1-.6-1.5-1.9-1.5s-1.7.5-1.7 1.2c0 .6.5 1.1 2.2 1.6 1.7.4 3.4 1.2 3.4 3.1 0 1.4-1.1 2.4-2.5 2.7v1.2z"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">Browse<br>Settlements</div>
+          <div class="tile-sub" id="tileBrowseCount">loading</div>
+        </div>
+      </button>
+
+      <button class="tile blue anim anim-delay-2" id="tileSearch" type="button">
+        <div class="tile-icon">
+          <svg viewBox="0 0 24 24"><path d="M21 20l-5.2-5.2a7 7 0 10-1.4 1.4L19.6 21.4l1.4-1.4zM4 10a6 6 0 1112 0 6 6 0 01-12 0z"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">Search<br>Your Name</div>
+          <div class="tile-sub">50 states</div>
+        </div>
+      </button>
+
+      <button class="tile orange anim anim-delay-3" id="tileEnding" type="button">
+        <div class="tile-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 4a1.4 1.4 0 011.4 1.4v6.2a1.4 1.4 0 01-2.8 0V7.4A1.4 1.4 0 0112 6zm0 11.5a1.5 1.5 0 110-3 1.5 1.5 0 010 3z"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">Ending<br>Soon</div>
+          <div class="tile-sub" id="tileEndingCount">this week</div>
+        </div>
+      </button>
+
+      <button class="tile purple anim anim-delay-4" id="tileNoProof" type="button">
+        <div class="tile-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2L3 6v6c0 5.5 3.8 10.7 9 12 5.2-1.3 9-6.5 9-12V6l-9-4zm-1.4 14.6L6 12l1.4-1.4 3.2 3.2 6.4-6.4L18.4 8.8l-7.8 7.8z"/></svg>
+        </div>
+        <div>
+          <div class="tile-title">No Proof<br>Needed</div>
+          <div class="tile-sub" id="tileNoProofCount">easy claims</div>
+        </div>
+      </button>
+    </div>
+    <div style="text-align:center;margin-top:14px">
+      <button id="programsLink" type="button" style="background:var(--ca-ink);color:#fff;border:none;border-radius:99px;font-size:14px;font-weight:800;cursor:pointer;font-family:inherit;padding:11px 22px;letter-spacing:-.01em;box-shadow:0 4px 12px rgba(0,0,0,.12);transition:transform .25s var(--spring)">Programs &amp; Scholarships &rarr;</button>
+    </div>
+  </section>
+
+  <!-- KEYWORD SEARCH MODAL (header search icon) -->
+  <div class="modal-backdrop" id="kwSearchBackdrop" style="display:none;align-items:flex-end">
+    <div class="modal" id="kwSearchModal" style="max-height:92vh;overflow-y:auto;padding:18px 24px">
+      <div class="modal-handle"></div>
+      <div class="section-head" style="margin-bottom:12px">
+        <div class="section-title">Search</div>
+        <button id="kwSearchClose" type="button" aria-label="Close" style="background:transparent;border:none;font-size:22px;font-weight:800;color:var(--ca-gray);cursor:pointer;padding:6px 10px;line-height:1">&times;</button>
+      </div>
+      <input type="text" id="kwSearchInput" placeholder="Search settlements, programs, scholarships..." autocomplete="off" style="width:100%;padding:14px 16px;font-size:16px;border:1.5px solid var(--ca-border);border-radius:14px;background:var(--ca-surface);color:var(--ca-ink);font-family:inherit;outline:none">
+      <div id="kwSearchHint" style="font-size:12px;color:var(--ca-gray);margin-top:8px;padding-left:2px">Try &quot;data breach&quot;, &quot;California&quot;, &quot;tax credit&quot;, brand names, etc.</div>
+      <div id="kwSearchResults" style="margin-top:14px"></div>
+    </div>
+  </div>
+
+  <!-- NAME SEARCH PANEL -->
+  <div class="modal-backdrop" id="searchModalBackdrop" style="display:none;align-items:flex-end">
+   <div class="modal" id="searchPanel" style="max-height:90vh;overflow-y:auto">
+    <div class="modal-handle"></div>
+    <div class="search-panel-head">
+      <div class="search-panel-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+      </div>
+      <div>
+        <div class="search-panel-title">Search Your Name</div>
+        <div class="search-panel-sub">Find unclaimed money across all 50 states</div>
+      </div>
+      <button id="searchModalClose" type="button" aria-label="Close" style="margin-left:auto;background:transparent;border:none;font-size:22px;font-weight:800;color:var(--ca-gray);cursor:pointer;padding:6px 10px;line-height:1">&times;</button>
+    </div>
+    <div class="search-inputs">
+      <input type="text" id="searchFirstName" placeholder="First name" autocomplete="given-name" maxlength="50">
+      <input type="text" id="searchLastName" placeholder="Last name" autocomplete="family-name" maxlength="50">
+    </div>
+    <div class="search-inputs">
+      <input type="text" id="searchCity" placeholder="City (optional)" autocomplete="address-level2" maxlength="50">
+      <select id="searchState">
+        <option value="">All States</option>
+        <option value="AL">Alabama</option><option value="AK">Alaska</option><option value="AZ">Arizona</option>
+        <option value="AR">Arkansas</option><option value="CA" selected>California</option><option value="CO">Colorado</option>
+        <option value="CT">Connecticut</option><option value="DE">Delaware</option><option value="DC">DC</option>
+        <option value="FL">Florida</option><option value="GA">Georgia</option><option value="HI">Hawaii</option>
+        <option value="ID">Idaho</option><option value="IL">Illinois</option><option value="IN">Indiana</option>
+        <option value="IA">Iowa</option><option value="KS">Kansas</option><option value="KY">Kentucky</option>
+        <option value="LA">Louisiana</option><option value="ME">Maine</option><option value="MD">Maryland</option>
+        <option value="MA">Massachusetts</option><option value="MI">Michigan</option><option value="MN">Minnesota</option>
+        <option value="MS">Mississippi</option><option value="MO">Missouri</option><option value="MT">Montana</option>
+        <option value="NE">Nebraska</option><option value="NV">Nevada</option><option value="NH">New Hampshire</option>
+        <option value="NJ">New Jersey</option><option value="NM">New Mexico</option><option value="NY">New York</option>
+        <option value="NC">North Carolina</option><option value="ND">North Dakota</option><option value="OH">Ohio</option>
+        <option value="OK">Oklahoma</option><option value="OR">Oregon</option><option value="PA">Pennsylvania</option>
+        <option value="RI">Rhode Island</option><option value="SC">South Carolina</option><option value="SD">South Dakota</option>
+        <option value="TN">Tennessee</option><option value="TX">Texas</option><option value="UT">Utah</option>
+        <option value="VT">Vermont</option><option value="VA">Virginia</option><option value="WA">Washington</option>
+        <option value="WV">West Virginia</option><option value="WI">Wisconsin</option><option value="WY">Wyoming</option>
+      </select>
+    </div>
+    <button class="search-btn" id="btnSearchName" type="button">Search All Databases</button>
+    <div class="search-results" id="nameSearchResults"></div>
+   </div>
+  </div>
+
+  <!-- CLAIMS MODAL (opened by Browse Settlements / Ending Soon / No Proof tiles) -->
+  <div class="modal-backdrop" id="claimsModalBackdrop" style="display:none;align-items:flex-end">
+   <div class="modal" id="claimsModal" style="max-height:92vh;overflow-y:auto;padding-top:18px">
+    <div class="modal-handle"></div>
+  <section class="section" id="browseSection" style="padding-top:8px">
+    <div class="section-head">
+      <div class="section-title" id="claimsModalTitle">Browse claims</div>
+      <button id="claimsModalClose" type="button" aria-label="Close" style="background:transparent;border:none;font-size:22px;font-weight:800;color:var(--ca-gray);cursor:pointer;padding:6px 10px;line-height:1">&times;</button>
+    </div>
+    <div id="claimsModalDropdowns" style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+      <label style="flex:1;min-width:140px;display:flex;flex-direction:column;gap:4px">
+        <span style="font-size:11px;font-weight:700;color:var(--ca-gray);letter-spacing:.04em;text-transform:uppercase;padding-left:2px">Category</span>
+        <select id="catSelect" style="appearance:none;-webkit-appearance:none;background:var(--ca-surface) url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%2386868b%22><path d=%22M7 10l5 5 5-5z%22/></svg>') no-repeat right 12px center / 16px;border:1px solid var(--ca-border);border-radius:14px;padding:12px 36px 12px 14px;font-size:15px;font-weight:700;color:var(--ca-ink);font-family:inherit;cursor:pointer;width:100%">
+          <option value="all">All categories</option>
+          <option value="settlement">Settlements</option>
+          <option value="grant">Grants</option>
+          <option value="scholarship">Scholarships</option>
+          <option value="tax_credit">Tax credits</option>
+          <option value="benefit">Benefits</option>
+          <option value="rebate">Rebates</option>
+          <option value="unclaimed">Unclaimed $</option>
+          <option value="state_program">State programs</option>
+          <option value="energy_rebate">Energy rebates</option>
+          <option value="loan">Loans</option>
+        </select>
+      </label>
+      <label style="flex:1;min-width:140px;display:flex;flex-direction:column;gap:4px">
+        <span style="font-size:11px;font-weight:700;color:var(--ca-gray);letter-spacing:.04em;text-transform:uppercase;padding-left:2px">Sort by</span>
+        <select id="sortSelect" style="appearance:none;-webkit-appearance:none;background:var(--ca-surface) url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 24 24%22 fill=%22%2386868b%22><path d=%22M7 10l5 5 5-5z%22/></svg>') no-repeat right 12px center / 16px;border:1px solid var(--ca-border);border-radius:14px;padding:12px 36px 12px 14px;font-size:15px;font-weight:700;color:var(--ca-ink);font-family:inherit;cursor:pointer;width:100%">
+          <option value="deadline">Expiring first</option>
+          <option value="payout">Highest payout</option>
+          <option value="noproof">No proof only</option>
+        </select>
+      </label>
+    </div>
+    <!-- Hidden chip rows kept for backward-compat with existing JS that calls .chip[data-cat=...].click() -->
+    <div class="chips" id="catChips" style="display:none">
+      <button class="chip active" data-cat="all" type="button">all</button>
+      <button class="chip" data-cat="settlement" type="button">Settlements</button>
+      <button class="chip" data-cat="grant" type="button">Grants</button>
+      <button class="chip" data-cat="scholarship" type="button">Scholarships</button>
+      <button class="chip" data-cat="tax_credit" type="button">Tax credits</button>
+      <button class="chip" data-cat="benefit" type="button">Benefits</button>
+      <button class="chip" data-cat="rebate" type="button">Rebates</button>
+      <button class="chip" data-cat="unclaimed" type="button">Unclaimed $</button>
+      <button class="chip" data-cat="state_program" type="button">State</button>
+      <button class="chip" data-cat="energy_rebate" type="button">Energy</button>
+      <button class="chip" data-cat="loan" type="button">Loans</button>
+    </div>
+    <div class="chips" id="sortChips" style="display:none">
+      <button class="chip active" data-sort="deadline" type="button">Expiring first</button>
+      <button class="chip" data-sort="payout" type="button">Highest $$$</button>
+      <button class="chip" data-sort="noproof" type="button">No proof only</button>
+    </div>
+  </section>
+
+  <!-- REPORT INACCURACY MODAL -->
+  <div class="modal-backdrop" id="reportModalBackdrop" style="display:none;align-items:flex-end;z-index:60">
+   <div class="modal" id="reportModal" style="padding:24px 24px calc(24px + env(safe-area-inset-bottom))">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <div class="section-title">Report inaccuracy</div>
+      <button id="reportModalClose" type="button" aria-label="Close" style="background:transparent;border:none;font-size:22px;font-weight:800;color:var(--ca-gray);cursor:pointer;padding:6px 10px;line-height:1">&times;</button>
+    </div>
+    <div id="reportClaimName" style="font-size:13px;color:var(--ca-gray);margin-bottom:18px;font-weight:600"></div>
+    <div style="margin-bottom:14px">
+      <div style="font-size:13px;font-weight:800;margin-bottom:8px;color:var(--ca-ink)">What's wrong?</div>
+      <select id="reportReason" class="modal-input" style="width:100%;padding:14px;border-radius:14px;border:1px solid var(--ca-border);background:#fff;font-size:15px;font-weight:600;color:var(--ca-ink);appearance:none;-webkit-appearance:none;background-image:url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='3'><path d='M6 9l6 6 6-6'/></svg>\");background-repeat:no-repeat;background-position:right 14px center;background-size:18px">
+        <option value="">Pick a reason…</option>
+        <option value="proof_required">Actually requires proof / receipt</option>
+        <option value="wrong_amount">Wrong payout amount</option>
+        <option value="wrong_deadline">Wrong deadline</option>
+        <option value="expired">Already expired or closed</option>
+        <option value="broken_link">Claim link is broken</option>
+        <option value="class_id_required">Requires Notice ID / Class ID / PIN</option>
+        <option value="not_eligible">Not actually a settlement / wrong type</option>
+        <option value="duplicate">Duplicate entry</option>
+        <option value="other">Something else</option>
+      </select>
+    </div>
+    <div style="margin-bottom:18px">
+      <div style="font-size:13px;font-weight:800;margin-bottom:8px;color:var(--ca-ink)">Details (optional)</div>
+      <textarea id="reportDetails" maxlength="500" placeholder="e.g. The site asks for a Class ID I never got, or the deadline passed in March, etc."
+                style="width:100%;min-height:80px;padding:12px;border-radius:14px;border:1px solid var(--ca-border);background:#fff;font-size:14px;font-family:inherit;color:var(--ca-ink);resize:vertical"></textarea>
+      <div style="font-size:11px;color:var(--ca-gray);margin-top:4px;text-align:right" id="reportCharCount">0 / 500</div>
+    </div>
+    <div id="reportErr" style="display:none;color:#B91C1C;font-size:13px;font-weight:700;margin-bottom:10px"></div>
+    <button id="reportSubmit" type="button" class="hero-cta" style="width:100%;height:50px;border-radius:14px;background:linear-gradient(180deg,#22c55e,#16a34a);color:#fff;font-weight:900;font-size:15px;border:none;cursor:pointer">Submit report</button>
+    <div style="font-size:11px;color:var(--ca-gray);margin-top:12px;text-align:center;line-height:1.5">
+      Thanks for helping keep Free Money accurate. We review every report.
+    </div>
+   </div>
+  </div>
+
+  <!-- SETTLEMENT LIST (inside Claims modal) -->
+  <section class="section" id="listSection">
+    <div class="list" id="cardList">
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+      <div class="skeleton"></div>
+    </div>
+    <div style="text-align:center;margin-top:14px;display:none" id="loadMoreWrap">
+      <button class="section-more" id="btnLoadMore" type="button" style="padding:10px 18px;border:1px solid var(--ca-border);border-radius:99px;background:var(--ca-surface);color:var(--ca-ink);font-weight:700;font-size:13px">Load more</button>
+    </div>
+  </section>
+   </div>
+  </div>
+
+  <!-- FREEBIES ROW (always visible on home, after the 4 tiles) -->
+  <section class="section" id="quickClaimSection" style="padding-top:8px">
+    <div class="section-head">
+      <div class="section-title">Freebies</div>
+    </div>
+    <div class="hscroll" id="quickClaim"></div>
+  </section>
+
+  <!-- PRO UPGRADE -->
+  <button class="pro-card anim" id="proCard" type="button">
+    <span class="pro-tag"><span>&#9733;</span> <span id="proTagText">Free Money Pro</span></span>
+    <div class="pro-title" id="proTitle">Catch every claim,<br>before deadlines hit.</div>
+    <div class="pro-desc" id="proDesc">Search all 50 states for unclaimed money in your name. Get push alerts when new settlements open or claims close.</div>
+    <div class="pro-perks">
+      <div class="pro-perk"><span class="check">&#10003;</span> Unlimited name searches across 50 states</div>
+      <div class="pro-perk"><span class="check">&#10003;</span> Every claim unlocked, no blurring</div>
+      <div class="pro-perk"><span class="check">&#10003;</span> Push + email alerts before deadlines</div>
+    </div>
+    <div style="font-size:12px;color:rgba(255,255,255,.55);font-weight:600;text-align:center;margin-top:14px">Free for 7 days &middot; $4.99/mo &middot; cancel anytime</div>
+    <span class="pro-btn" id="proBtn">Try free for 7 days</span>
+    <button class="pro-restore-link" id="proRestoreLink" type="button">Already a Pro member? Restore access</button>
+  </button>
+
+  <div style="margin:24px 20px 0;padding:14px 16px;background:var(--ca-surface);border:1px solid var(--ca-border);border-radius:14px;font-size:11px;line-height:1.55;color:var(--ca-gray);font-weight:600">
+    <div style="font-weight:900;color:var(--ca-ink);margin-bottom:4px;font-size:12px;letter-spacing:.02em">Important</div>
+    Some amounts shown are per-claimant payouts (what you actually receive); others are the TOTAL class-action fund (the full amount the defendant pays, divided among all class members). When a total fund is shown, it does NOT reflect what an individual claimant gets &mdash; per-claimant payouts are typically $5&ndash;$500 depending on eligibility and the number of claimants. Settlement details are aggregated by AI and may contain inaccuracies &mdash; always verify on the official claim page before submitting. Free Money does not file claims on your behalf.
+  </div>
+  <div class="footer">
+    <a href="/terms-of-service" style="color:var(--ca-gray);text-decoration:underline;font-weight:700">Terms</a>
+    &nbsp;&middot;&nbsp;
+    <a href="/privacy-policy.html" style="color:var(--ca-gray);text-decoration:underline;font-weight:700">Privacy</a>
+    &nbsp;&middot;&nbsp;
+    <a href="#" id="footerManageLink" style="color:var(--ca-gray);text-decoration:underline;font-weight:700">Manage subscription</a>
+    &nbsp;&middot;&nbsp;
+    <a href="mailto:info@myfreemoney.app" style="color:var(--ca-gray);text-decoration:underline;font-weight:700">Contact</a>
+    <div style="margin-top:8px;text-transform:none;letter-spacing:0;font-size:11px">
+      <a href="mailto:info@myfreemoney.app?subject=Do%20Not%20Sell%20My%20Personal%20Information" style="color:var(--ca-gray);text-decoration:underline">Do Not Sell My Info</a>
+    </div>
+    <div style="margin-top:10px;font-size:10px;text-transform:none;letter-spacing:.02em;color:var(--ca-gray)">&copy; 2026 Free Money &middot; myfreemoney.app</div>
+  </div>
+  <div style="height:12px"></div>
+</div>
+
+<!-- BOTTOM NAV -->
+<!-- bottom-nav removed — tiles cover the same ground -->
+
+<script>
+(function(){
+  "use strict";
+
+  // ---------- Utilities ----------
+  function escHtml(s){
+    if(s===undefined||s===null) return "";
+    var d = document.createElement("div");
+    d.appendChild(document.createTextNode(String(s)));
+    return d.innerHTML;
+  }
+  function isSafeUrl(url){
+    if(!url || url === "#") return false;
+    return /^https?:\/\//i.test(url);
+  }
+  var NAME_RE = /^[a-zA-Z\s\-']+$/;
+  function validName(n){ return typeof n === "string" && n.length > 0 && n.length <= 50 && NAME_RE.test(n); }
+  function money(n){ if(typeof n !== "number" || isNaN(n)) return "$0"; return "$" + Math.round(n).toLocaleString('en-US'); }
+  function fmtBig(n){
+    if(n >= 1e9) return "$" + (n/1e9).toFixed(1) + "B";
+    if(n >= 1e6) return "$" + (n/1e6).toFixed(1) + "M";
+    if(n >= 1e3) return "$" + Math.round(n/1e3) + "K";
+    return "$" + Math.round(n).toLocaleString('en-US');
+  }
+  function daysUntil(dateStr){
+    if(!dateStr) return 9999;
+    var s = String(dateStr).trim();
+    if(!s) return 9999;
+    var t = null;
+    // 1) ISO format YYYY-MM-DD
+    var iso = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/);
+    if(iso){
+      t = new Date(parseInt(iso[1],10), parseInt(iso[2],10)-1, parseInt(iso[3],10));
+    }
+    if(!t || isNaN(t.getTime())){
+      // 2) Slash format MM/DD/YYYY or M/D/YY
+      var sl = s.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})$/);
+      if(sl){
+        var yy = parseInt(sl[3],10);
+        if(yy < 100) yy += 2000;
+        t = new Date(yy, parseInt(sl[1],10)-1, parseInt(sl[2],10));
+      }
+    }
+    if(!t || isNaN(t.getTime())){
+      // 3) Natural language: "june 16, 2026" / "Jun 16 2026" / "16 June 2026"
+      var months = {jan:0,january:0,feb:1,february:1,mar:2,march:2,apr:3,april:3,may:4,jun:5,june:5,jul:6,july:6,aug:7,august:7,sep:8,sept:8,september:8,oct:9,october:9,nov:10,november:10,dec:11,december:11};
+      var lc = s.toLowerCase().replace(/[,\.]/g," ").replace(/\s+/g," ");
+      // Match Month Day, Year  OR  Day Month Year
+      var nl = lc.match(/([a-z]+)\s+(\d{1,2})\s+(\d{4})/);
+      if(nl && months[nl[1]] !== undefined){
+        t = new Date(parseInt(nl[3],10), months[nl[1]], parseInt(nl[2],10));
+      } else {
+        var nl2 = lc.match(/(\d{1,2})\s+([a-z]+)\s+(\d{4})/);
+        if(nl2 && months[nl2[2]] !== undefined){
+          t = new Date(parseInt(nl2[3],10), months[nl2[2]], parseInt(nl2[1],10));
+        }
+      }
+    }
+    if(!t || isNaN(t.getTime())){
+      // 4) Last resort: native Date parser
+      var nd = new Date(s);
+      if(!isNaN(nd.getTime())) t = nd;
+    }
+    if(!t || isNaN(t.getTime())) return 9999;
+    var now = new Date(); now.setHours(0,0,0,0);
+    var r = Math.ceil((t - now) / 86400000);
+    return isNaN(r) ? 9999 : r;
+  }
+  function formatPayout(item){
+    if(!item) return "Varies";
+    if(typeof item === "string") return item || "Varies";
+    if(item.payout) return item.payout;
+    var low = item.payout_low || 0, high = item.payout_high || 0;
+    if(high > 0 && low > 0 && low !== high) return "$" + low.toLocaleString() + " - $" + high.toLocaleString();
+    if(high > 0) return "Up to $" + high.toLocaleString();
+    if(low > 0) return "$" + low.toLocaleString() + "+";
+    return "Varies";
+  }
+  function pickAmount(s){
+    return s.payout_high || s.payout_low || 0;
+  }
+  function pickLogoColor(name){
+    var palette = ["lg-green","lg-blue","lg-orange","lg-purple","lg-pink","lg-red","lg-ink","lg-yellow"];
+    var h = 0; var str = String(name || "");
+    for(var i=0;i<str.length;i++) h = (h*31 + str.charCodeAt(i)) | 0;
+    return palette[Math.abs(h) % palette.length];
+  }
+  function firstInitial(s){
+    var str = String(s || "?").trim();
+    return str.charAt(0).toUpperCase() || "?";
+  }
+  function vibrate(pattern){ if(navigator.vibrate) navigator.vibrate(pattern); }
+
+  // ---------- Coin-drop audio ----------
+  // Pre-warmed on first user tap so subsequent plays are instant.
+  var _audioCtx = null;
+  var _audioWarmed = false;
+  function _ensureAudio(){
+    try {
+      if(!_audioCtx){
+        var Ctx = window.AudioContext || window.webkitAudioContext;
+        if(Ctx) _audioCtx = new Ctx();
+      }
+      if(_audioCtx && _audioCtx.state === "suspended"){
+        _audioCtx.resume();
+      }
+      // Pre-warm: play a silent tone so the buffer is ready for instant playback later
+      if(_audioCtx && !_audioWarmed){
+        var osc = _audioCtx.createOscillator();
+        var g = _audioCtx.createGain();
+        g.gain.setValueAtTime(0.00001, _audioCtx.currentTime);
+        osc.connect(g).connect(_audioCtx.destination);
+        osc.start();
+        osc.stop(_audioCtx.currentTime + 0.02);
+        _audioWarmed = true;
+      }
+    } catch(_e){}
+    return _audioCtx;
+  }
+  document.addEventListener("touchstart", _ensureAudio, {passive:true});
+  document.addEventListener("click", _ensureAudio);
+
+  function playCoin(intensity){
+    var ctx = _ensureAudio();
+    if(!ctx || ctx.state !== "running") return;
+    var now = ctx.currentTime;
+    var loud = intensity === "loud";
+    var baseVol = loud ? 0.18 : 0.10;
+    function clink(freq, start, dur, vol, type){
+      var osc = ctx.createOscillator();
+      var g = ctx.createGain();
+      osc.frequency.value = freq;
+      osc.type = type || "triangle";
+      g.gain.setValueAtTime(0.0001, now + start);
+      g.gain.exponentialRampToValueAtTime(vol, now + start + 0.003);
+      g.gain.exponentialRampToValueAtTime(0.0001, now + start + dur);
+      osc.connect(g).connect(ctx.destination);
+      osc.start(now + start);
+      osc.stop(now + start + dur + 0.02);
+    }
+    // Coin drop: sharp metallic tink + quick settle
+    clink(2600, 0,     0.06, baseVol,        "triangle");
+    clink(1900, 0.025, 0.09, baseVol * 0.7,  "triangle");
+    if(loud){
+      clink(2200, 0.10, 0.07, baseVol * 0.5,  "triangle");
+      clink(1500, 0.13, 0.10, baseVol * 0.4,  "triangle");
+    }
+  }
+  // Backward-compat alias for any existing callers
+  function playChime(intensity){ playCoin(intensity); }
+
+  // ---------- Toast ----------
+  var toast = document.getElementById("toast");
+  var toastMsg = document.getElementById("toastMsg");
+  var toastTimer = null;
+  function showToast(msg, cashed){
+    toastMsg.textContent = String(msg).slice(0, 140);
+    toast.classList.remove("cashed");
+    if(cashed) toast.classList.add("cashed");
+    toast.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function(){ toast.classList.remove("show"); }, 2400);
+  }
+
+  // ---------- State ----------
+  var allSettlements = [];
+  var displayed = 0;
+  var PAGE_SIZE = 12;
+  var currentSort = "deadline";
+  var currentCat = "all";
+  var isPro = localStorage.getItem("freemoney_pro") === "1";
+  var FREE_PREVIEW_COUNT = 3;
+  var _freePreviewIds = [];
+  var FM_JSON_HEADERS = {"Content-Type":"application/json","X-Requested-With":"XMLHttpRequest"};
+
+  // ---------- Pro Status Check ----------
+  function checkProStatus(){
+    fetch("/api/freemoney/pro-status", { headers:FM_JSON_HEADERS, credentials:"same-origin" })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        if(data.pro){
+          localStorage.setItem("freemoney_pro","1");
+          if(data.email) localStorage.setItem("freemoney_email", data.email);
+          if(!isPro){ isPro = true; rerender(); updateNotifUI(); updateProCard(); }
+        } else {
+          localStorage.removeItem("freemoney_pro");
+          if(isPro){ isPro = false; rerender(); updateNotifUI(); updateProCard(); }
+        }
+        updateProCard();
+      })
+      .catch(function(){});
+  }
+
+  function updateProCard(){
+    var card = document.getElementById("proCard");
+    var tag = document.getElementById("proTagText");
+    var title = document.getElementById("proTitle");
+    var desc = document.getElementById("proDesc");
+    var btn = document.getElementById("proBtn");
+    var restore = document.getElementById("proRestoreLink");
+    if(isPro){
+      card.classList.add("pro-active");
+      tag.textContent = "Pro Active";
+      title.innerHTML = "You're all unlocked.";
+      desc.textContent = "Thanks for supporting Free Money. Enjoy unlimited claims, deadline alerts, and every settlement fully unlocked.";
+      btn.textContent = "Manage subscription";
+      restore.style.display = "none";
+    } else {
+      card.classList.remove("pro-active");
+      tag.textContent = "Free Money Pro";
+      title.innerHTML = "Find 3x more<br>claims, faster.";
+      desc.textContent = "Pro scans all 50 states, tracks your matches, and alerts you the moment new settlements open.";
+      btn.textContent = "Try free for 7 days";
+      restore.style.display = "block";
+    }
+  }
+
+  // ---------- Hero count-up ----------
+  function heroAnimate(total){
+    var whole = document.getElementById("heroWhole");
+    var cents = document.getElementById("heroCents");
+    var heroAmt = document.querySelector(".hero-amount");
+    var target = Math.max(0, Math.round(total));
+    var start = performance.now();
+    var duration = 1400;
+    // Compact display mode (always-fits-in-frame): for values >= 1M show "27.5M" not "27,536,831"
+    var compactMode = target >= 1000000;
+    function fmtAnim(v){
+      if(compactMode){
+        if(v >= 1e9) return (v/1e9).toFixed(1) + "B";
+        if(v >= 1e6) return (v/1e6).toFixed(1) + "M";
+        if(v >= 1e3) return (v/1e3).toFixed(0) + "K";
+        return v.toLocaleString('en-US');
+      }
+      if(v >= 1e3) return v.toLocaleString('en-US');
+      return String(v);
+    }
+    function tick(now){
+      var t = Math.min(1, (now-start)/duration);
+      // ease-out-expo for that "money rolls in" feel
+      var eased = t === 1 ? 1 : 1 - Math.pow(2, -10 * t);
+      var v = Math.floor(target * eased);
+      whole.textContent = fmtAnim(v);
+      if(t < 1){
+        requestAnimationFrame(tick);
+      } else {
+        whole.textContent = fmtAnim(target);
+        // Ka-ching scale bounce (no glow/flash)
+        if(heroAmt){
+          heroAmt.classList.remove("pulse");
+          void heroAmt.offsetWidth;
+          heroAmt.classList.add("pulse");
+        }
+        // Subtle audio chime (only fires after user has tapped at least once)
+        try { playChime(); } catch(_e){}
+      }
+    }
+    requestAnimationFrame(tick);
+    cents.textContent = compactMode ? "" : ".00";
+  }
+
+  // ---------- Sort/Filter ----------
+  function isSettlement(s){
+    return (s.category || "settlement") === "settlement";
+  }
+
+  function sortData(data, mode){
+    var clone = data.slice();
+    if(currentCat !== "all"){
+      clone = clone.filter(function(s){ return (s.category || "settlement") === currentCat; });
+    } else if(mode !== "programs"){
+      // Default the "all" view to settlements only, EXCEPT for Programs mode which wants non-settlements
+      clone = clone.filter(isSettlement);
+    }
+    if(mode === "payout"){
+      clone.sort(function(a,b){ return (b.payout_high || 0) - (a.payout_high || 0); });
+    } else if(mode === "noproof"){
+      // Include both full no-proof AND partial-tier (basic tier has no-proof option)
+      clone = clone.filter(function(s){ return s.no_proof_flag === 1; });
+      // Sort: full no-proof first, then partials, then by deadline
+      clone.sort(function(a,b){
+        var af = isFullNoProof(a) ? 0 : 1;
+        var bf = isFullNoProof(b) ? 0 : 1;
+        if(af !== bf) return af - bf;
+        return daysUntil(a.deadline) - daysUntil(b.deadline);
+      });
+    } else if(mode === "endingsoon"){
+      // Ending Soon: only entries with a real deadline within the next 14 days
+      clone = clone.filter(function(s){
+        if(!s.deadline) return false;
+        var d = daysUntil(s.deadline);
+        return d >= 0 && d <= 14;
+      });
+      clone.sort(function(a,b){ return daysUntil(a.deadline) - daysUntil(b.deadline); });
+    } else if(mode === "programs"){
+      // Programs & Benefits: non-settlement categories (state programs, scholarships, grants, etc.)
+      clone = clone.filter(function(s){ return (s.category || "settlement") !== "settlement"; });
+      clone.sort(function(a,b){ return (b.payout_high || 0) - (a.payout_high || 0); });
+    } else {
+      clone.sort(function(a,b){ return daysUntil(a.deadline) - daysUntil(b.deadline); });
+    }
+    return clone;
+  }
+
+  // ---------- Render Freebies (sticky until expired) ----------
+  // Each device picks 3 freebies on first visit. They DO NOT rotate.
+  // A slot only changes when the claim itself drops out of the pool
+  // (status="expired" or deadline already passed). Then that one slot
+  // is replaced with a fresh random pick from the remaining pool.
+  function renderQuickClaim(){
+    var host = document.getElementById("quickClaim");
+    host.innerHTML = "";
+    var pool = allSettlements.filter(function(s){
+      if(!isSettlement(s)) return false;
+      if(s.no_proof_flag !== 1) return false;  // includes full + partial; badge differentiates
+      if(s.status === "expired") return false;
+      if(daysUntil(s.deadline) < 0) return false;
+      return true;
+    });
+
+    // Sticky-until-expired: each device gets 3 picks that persist FOREVER
+    // until the underlying claim drops out of the pool (status=expired or deadline passed).
+    // Only then is a slot replaced. This stops users from refreshing or coming back daily
+    // to harvest new freebies.
+    var byId = {};
+    pool.forEach(function(s){ byId[s.id] = s; });
+
+    var storedIds = [];
+    try {
+      var raw = localStorage.getItem("freemoney_freebies");
+      var parsed = raw ? JSON.parse(raw) : null;
+      if(parsed && Array.isArray(parsed.ids)) storedIds = parsed.ids;
+    } catch(_e){}
+
+    // Keep stored picks that are still valid; drop expired ones
+    var noProofList = storedIds.map(function(id){ return byId[id]; }).filter(Boolean);
+
+    // Refill empty slots from a shuffled remainder, no duplicates
+    if(noProofList.length < 3){
+      var taken = {};
+      noProofList.forEach(function(s){ taken[s.id] = true; });
+      var remainder = pool.filter(function(s){ return !taken[s.id]; });
+      for(var i = remainder.length - 1; i > 0; i--){
+        var j = Math.floor(Math.random() * (i + 1));
+        var t = remainder[i]; remainder[i] = remainder[j]; remainder[j] = t;
+      }
+      while(noProofList.length < 3 && remainder.length){
+        noProofList.push(remainder.shift());
+      }
+      try {
+        localStorage.setItem("freemoney_freebies", JSON.stringify({
+          ids: noProofList.map(function(s){ return s.id; })
+        }));
+      } catch(_e){}
+    }
+
+    _freePreviewIds = noProofList.slice(0, FREE_PREVIEW_COUNT).map(function(s){ return s.id; });
+
+    if(noProofList.length === 0){
+      // leave hidden if no items
+      return;
+    }
+
+    noProofList.forEach(function(s, i){
+      var amt = pickAmount(s);
+      var days = daysUntil(s.deadline);
+      var isFree = !isPro && i < FREE_PREVIEW_COUNT;
+      var locked = !isPro && !isFree;
+      var el = document.createElement("div");
+      el.className = "qc-card anim anim-delay-" + Math.min(i+1, 5) + (locked ? " qc-blur" : "");
+      var daysTxt = (days < 10 && days >= 0) ? (days + (days === 1 ? " day left" : " days left")) : "Easy claim";
+      var btnTxt = s.claimed ? "Claimed" : (locked ? "Unlock Pro" : "Claim now");
+      var pn = String(s.proof_needed || "").toLowerCase();
+      var isPartial = pn.indexOf("partial") !== -1 || (pn.indexOf("none") === 0 && pn.indexOf("--") !== -1 && pn.indexOf("up to") !== -1);
+      var isFullNoProof = (pn === "none" || pn.indexOf("none --") === 0 || pn.indexOf("none -") === 0) && !isPartial;
+      var qcTag = "";
+      if(isFullNoProof){
+        qcTag = '<div class="qc-tag" style="background:#DCFCE7;color:#166534"><span class="pulse"></span>No proof</div>';
+      } else if(isPartial || s.no_proof_flag === 1){
+        qcTag = '<div class="qc-tag" style="background:#FEF3C7;color:#92400E"><span class="pulse"></span>Partial proof</div>';
+      }
+      el.innerHTML =
+        qcTag +
+        '<div class="qc-name">' + escHtml(s.name) + '</div>' +
+        '<div class="qc-amount">' + (amt ? fmtBig(amt) : escHtml(formatPayout(s))) + '</div>' +
+        '<div class="qc-meta">' + escHtml(daysTxt) + '</div>' +
+        '<button class="qc-btn' + (s.claimed ? " claimed" : "") + '" data-id="' + parseInt(s.id,10) + '" data-url="' + escHtml(s.claim_url || "#") + '" data-locked="' + (locked ? "1" : "0") + '" type="button">' + escHtml(btnTxt) + '</button>';
+      host.appendChild(el);
+    });
+  }
+
+  // ---------- Render Main List ----------
+  function renderCard(s, idx){
+    var days = daysUntil(s.deadline);
+    var noproof = s.no_proof_flag === 1;
+    var isClaimed = s.claimed === 1;
+    var isFree = !isPro && _freePreviewIds.indexOf(s.id) !== -1;
+    var canSee = isPro || isFree;
+    var amt = pickAmount(s);
+    var logoColor = pickLogoColor(s.name);
+    var initial = firstInitial(s.name);
+
+    var daysBadge = "";
+    if(days >= 0 && days <= 30){
+      var badgeClass = days <= 7 ? "urgent" : "";
+      daysBadge = '<span style="font-size:11px;font-weight:800;padding:3px 9px;border-radius:99px;background:' + (days<=7?'#FEE2E2':'#FFEDD5') + ';color:' + (days<=7?'#B91C1C':'#C2410C') + '">' + days + 'd left</span>';
+    }
+
+    var pillClass = "row-pill";
+    var pillText = "Claim";
+    if(isClaimed){ pillClass += " claimed"; pillText = "Claimed"; }
+    else if(!canSee){ pillClass += " locked"; pillText = "Unlock"; }
+
+    var rowCls = "row anim anim-delay-" + Math.min((idx%5)+1, 5) + (!canSee ? " blurred" : "");
+
+    var catLabels = {settlement:"Class Action",grant:"Grant",scholarship:"Scholarship",tax_credit:"Tax Credit",benefit:"Benefit",loan:"Loan",rebate:"Rebate",unclaimed:"Unclaimed $",state_program:"State",energy_rebate:"Energy",forgivable_loan:"Loan",covid_relief:"COVID",cashback:"Cashback"};
+    var cat = s.category || "settlement";
+    var catLabel = catLabels[cat] || cat;
+
+    var pnText = String(s.proof_needed || "").toLowerCase();
+    var rowIsPartial = pnText.indexOf("partial") !== -1;
+    var rowIsFullNoProof = (pnText === "none" || pnText.indexOf("none --") === 0 || pnText.indexOf("none -") === 0) && !rowIsPartial;
+    var descBits = [];
+    descBits.push(escHtml(catLabel));
+    if(rowIsFullNoProof) descBits.push('<span style="color:#16a34a;font-weight:800">No proof</span>');
+    else if(rowIsPartial || noproof) descBits.push('<span style="color:#C2410C;font-weight:800">Partial proof</span>');
+    if(s.state && s.state.toUpperCase() !== "NATIONAL") descBits.push(escHtml(s.state.toUpperCase()));
+    var desc = descBits.join(" &middot; ");
+    if(s.description && canSee){
+      var d = String(s.description).slice(0, 70);
+      desc = escHtml(d) + (s.description.length > 70 ? "..." : "");
+    }
+
+    return (
+      '<div class="' + rowCls + '" data-id="' + parseInt(s.id,10) + '" data-url="' + escHtml(s.claim_url || "#") + '" data-locked="' + (!canSee ? "1" : "0") + '">' +
+        '<div class="row-receipt-id">RCPT · ' + String(parseInt(s.id,10)).padStart(6,"0") + '</div>' +
+        '<div class="row-logo ' + logoColor + '">' + escHtml(initial) + '</div>' +
+        '<div class="row-body">' +
+          '<div class="row-name">' + escHtml(s.name) + '</div>' +
+          '<div class="row-desc">' + desc + '</div>' +
+        '</div>' +
+        '<div class="row-right">' +
+          '<div class="row-amount">' + (amt ? money(amt) : escHtml(formatPayout(s))) + '</div>' +
+          (daysBadge ? ('<div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">' + daysBadge + '<button class="' + pillClass + '" data-pillbtn="1" type="button">' + escHtml(pillText) + '</button></div>') : ('<button class="' + pillClass + '" data-pillbtn="1" type="button">' + escHtml(pillText) + '</button>')) +
+        '</div>' +
+        '<button class="row-report" data-reportbtn="1" data-id="' + parseInt(s.id,10) + '" data-name="' + escHtml(s.name) + '" type="button" title="Report inaccuracy">' +
+          '<span aria-hidden="true">⚑</span> Report' +
+        '</button>' +
+      '</div>'
+    );
+  }
+
+  function renderPage(){
+    var cardList = document.getElementById("cardList");
+    var loadMoreWrap = document.getElementById("loadMoreWrap");
+
+    if(currentCat === "unclaimed"){
+      cardList.innerHTML = '<div class="empty"><div class="empty-icon">$</div><div class="empty-title">Search your name</div><div class="empty-desc">Tap <b>Scan</b> to find unclaimed money across all 50 states.</div></div>';
+      loadMoreWrap.style.display = "none";
+      return;
+    }
+
+    var sorted = sortData(allSettlements, currentSort);
+    var batch = sorted.slice(0, displayed + PAGE_SIZE);
+    displayed = batch.length;
+
+    if(sorted.length === 0){
+      cardList.innerHTML = '<div class="empty"><div class="empty-icon">$</div><div class="empty-title">No claims found</div><div class="empty-desc">Try a different filter or check back later.</div></div>';
+      loadMoreWrap.style.display = "none";
+      return;
+    }
+
+    _freePreviewIds = [];
+    // On the "all" tab in default deadline view, hide no-proof entries (already shown as Freebies on home).
+    // BUT if the user picked a specialized sort (noproof / endingsoon / payout), respect that — don't strip.
+    var sortedFull = sorted;
+    if(currentCat === "all" && currentSort !== "noproof" && currentSort !== "endingsoon" && currentSort !== "payout"){
+      sortedFull = sorted.filter(function(s){ return s.no_proof_flag !== 1; });
+      batch = batch.filter(function(s){ return s.no_proof_flag !== 1; });
+    }
+
+    var html = "";
+    // Only show the upgrade banner in Browse mode — Ending Soon and No Proof should feel focused
+    var modalBd = document.getElementById("claimsModalBackdrop");
+    var modalMode = modalBd ? (modalBd.getAttribute("data-mode") || "browse") : "browse";
+    var showBanner = !isPro && modalMode === "browse";
+    if(showBanner && currentCat === "all"){
+      var moreCount = sortedFull.length;
+      html += '<div class="upgrade-inline">' +
+        '<div class="upgrade-inline-text">' + moreCount + ' more claims waiting</div>' +
+        '<button class="upgrade-inline-btn" data-upgrade="1" type="button">Try free for 7 days</button>' +
+      '</div>';
+    } else if(showBanner && currentCat !== "all"){
+      html += '<div class="upgrade-inline">' +
+        '<div class="upgrade-inline-text">' + sorted.length + ' in this category &bull; unlock to claim</div>' +
+        '<button class="upgrade-inline-btn" data-upgrade="1" type="button">Try free for 7 days</button>' +
+      '</div>';
+    }
+
+    for(var i = 0; i < batch.length; i++){
+      html += renderCard(batch[i], i);
+    }
+    cardList.innerHTML = html;
+    loadMoreWrap.style.display = (displayed < sorted.length) ? "" : "none";
+  }
+
+  // ---------- Ending Soon (section removed — function kept as no-op) ----------
+  function renderEnding(){
+    var host = document.getElementById("endingList");
+    var sec = document.getElementById("endingSection");
+    if(!host || !sec) return;  // section was removed
+    host.innerHTML = "";
+    var list = allSettlements
+      .filter(function(s){ var d = daysUntil(s.deadline); return d >= 0 && d <= 14 && s.status !== "expired"; })
+      .sort(function(a,b){ return daysUntil(a.deadline) - daysUntil(b.deadline); })
+      .slice(0, 4);
+    if(list.length === 0){ sec.style.display = "none"; return; }
+    sec.style.display = "";
+    list.forEach(function(s, i){
+      var days = daysUntil(s.deadline);
+      var urgent = days <= 7;
+      var amt = pickAmount(s);
+      var isFree = !isPro && _freePreviewIds.indexOf(s.id) !== -1;
+      var canSee = isPro || isFree;
+      var card = document.createElement("div");
+      card.className = "ending-card anim anim-delay-" + Math.min(i+1,5) + (!canSee ? " blurred" : "");
+      card.setAttribute("data-id", parseInt(s.id,10));
+      card.setAttribute("data-url", s.claim_url || "#");
+      card.setAttribute("data-locked", canSee ? "0" : "1");
+      card.innerHTML =
+        '<div class="ending-days ' + (urgent ? "urgent" : "") + '">' +
+          '<div class="n">' + days + '</div>' +
+          '<div class="u">' + (days === 1 ? "day" : "days") + '</div>' +
+        '</div>' +
+        '<div class="ending-body">' +
+          '<div class="ending-name">' + escHtml(s.name) + '</div>' +
+          '<div class="ending-meta">' +
+            '<span class="ending-amount">' + (amt ? money(amt) : escHtml(formatPayout(s))) + '</span>' +
+            '<span class="dot"></span>' +
+            '<span>' + escHtml(s.category || "Settlement") + '</span>' +
+            (s.no_proof_flag === 1 ? '<span class="dot"></span><span>No proof</span>' : '') +
+          '</div>' +
+        '</div>';
+      host.appendChild(card);
+    });
+  }
+
+  // ---------- Stats ----------
+  function isFullNoProof(s){
+    if(s.no_proof_flag !== 1) return false;
+    var pn = String(s.proof_needed || "").toLowerCase();
+    if(pn.indexOf("partial") !== -1) return false;
+    return pn === "none" || pn.indexOf("none --") === 0 || pn.indexOf("none -") === 0;
+  }
+  function isPartialNoProof(s){
+    if(s.no_proof_flag !== 1) return false;
+    var pn = String(s.proof_needed || "").toLowerCase();
+    return pn.indexOf("partial") !== -1;
+  }
+  function updateHeroStats(){
+    var noproof = 0;
+    var partial = 0;
+    var totalHigh = 0;
+    var matches = 0;
+    var catCounts = {};
+    for(var i=0;i<allSettlements.length;i++){
+      var s = allSettlements[i];
+      if(isFullNoProof(s)) noproof++;
+      if(isPartialNoProof(s)) partial++;
+      if(s.status !== "expired"){
+        matches++;
+        totalHigh += (s.payout_high || 0);
+        var c = s.category || "settlement";
+        catCounts[c] = (catCounts[c] || 0) + 1;
+      }
+    }
+    heroAnimate(totalHigh);
+    document.getElementById("heroMatches").textContent = matches;
+    document.getElementById("heroNoProof").textContent = noproof;
+    var hp = document.getElementById("heroPartial"); if(hp) hp.textContent = partial;
+    var tbrc = document.getElementById("tileBrowseCount");
+    if(tbrc) tbrc.textContent = matches + " claims";
+    var endingCnt = allSettlements.filter(function(s){ var d = daysUntil(s.deadline); return d >= 0 && d <= 14; }).length;
+    var tec = document.getElementById("tileEndingCount");
+    if(tec) tec.textContent = endingCnt + " this week";
+  }
+
+  function rerender(){
+    displayed = 0;
+    renderPage();
+    renderQuickClaim();
+    renderEnding();
+  }
+
+  // ---------- Cash burst (dollar-sign rain from button) ----------
+  function cashBurst(originEl){
+    if(!originEl) return;
+    var r = originEl.getBoundingClientRect();
+    var cx = r.left + r.width/2, cy = r.top + r.height/2;
+    var glyphs = ["$","$","$","$","+","$"];
+    for(var i=0;i<14;i++){
+      var el = document.createElement("span");
+      el.className = "cash-burst";
+      el.textContent = glyphs[i % glyphs.length];
+      var size = 16 + Math.random()*18;
+      el.style.fontSize = size + "px";
+      el.style.left = (cx - size/2) + "px";
+      el.style.top = (cy - size/2) + "px";
+      var angle = -Math.PI/2 + (Math.random()-.5)*1.4;
+      var dist = 120 + Math.random()*160;
+      el.style.setProperty("--dx", Math.cos(angle)*dist + "px");
+      el.style.setProperty("--dy", Math.sin(angle)*dist + "px");
+      el.style.setProperty("--rot", ((Math.random()-.5)*80) + "deg");
+      el.style.animation = "cashFly " + (900 + Math.random()*500) + "ms cubic-bezier(.2,.8,.2,1) forwards";
+      document.body.appendChild(el);
+      setTimeout((function(n){ return function(){ if(n.parentNode) n.parentNode.removeChild(n); }; })(el), 1500);
+    }
+  }
+
+  // ---------- Hero amount pulse (call after counter updates) ----------
+  function heroPulse(){
+    var h = document.querySelector(".hero-amount");
+    if(!h) return;
+    h.classList.remove("pulse");
+    void h.offsetWidth;
+    h.classList.add("pulse");
+  }
+
+  // ---------- Claim flow ----------
+  function claimAndOpen(id, url, btnEl){
+    var safeId = parseInt(id, 10);
+    if(isNaN(safeId)) return;
+    if(!isPro && _freePreviewIds.indexOf(safeId) === -1){ showProModal(); return; }
+    if(btnEl){ btnEl.classList.add("pressed"); setTimeout(function(){ btnEl.classList.remove("pressed"); }, 500); cashBurst(btnEl); }
+    heroPulse();
+    fetch("/api/settlements/claim", {
+      method:"POST",
+      headers:{"Content-Type":"application/json","X-Requested-With":"XMLHttpRequest"},
+      credentials:"same-origin",
+      body: JSON.stringify({id: safeId})
+    }).then(function(r){ return r.json(); }).then(function(){
+      for(var i=0;i<allSettlements.length;i++){
+        if(allSettlements[i].id === safeId){ allSettlements[i].claimed = 1; break; }
+      }
+      rerender();
+    }).catch(function(){});
+    if(isSafeUrl(url)){
+      window.open(url, "_blank", "noopener,noreferrer");
+    }
+    showToast("CASHED! Claim opened", true);
+    vibrate([10,40,10,40,10]);
+    try { playChime("loud"); } catch(_e){}
+  }
+
+  // ---------- Delegated clicks (CSP-safe, no inline onclick) ----------
+  document.body.addEventListener("click", function(e){
+    var upgradeBtn = e.target.closest("[data-upgrade]");
+    if(upgradeBtn){ showProModal(); return; }
+
+    var qcBtn = e.target.closest(".qc-btn");
+    if(qcBtn){
+      e.stopPropagation();
+      if(qcBtn.classList.contains("claimed")) return;
+      var id = parseInt(qcBtn.getAttribute("data-id"),10);
+      var url = qcBtn.getAttribute("data-url");
+      var locked = qcBtn.getAttribute("data-locked") === "1";
+      if(locked){ showProModal(); return; }
+      claimAndOpen(id, url, qcBtn);
+      return;
+    }
+
+    var reportBtn = e.target.closest("[data-reportbtn]");
+    if(reportBtn){
+      e.stopPropagation();
+      e.preventDefault();
+      var rcid = parseInt(reportBtn.getAttribute("data-id"),10);
+      var rcname = reportBtn.getAttribute("data-name") || "";
+      openReportModal(rcid, rcname);
+      return;
+    }
+
+    var pillBtn = e.target.closest("[data-pillbtn]");
+    if(pillBtn){
+      e.stopPropagation();
+      var row = pillBtn.closest(".row");
+      if(!row) return;
+      var rid = parseInt(row.getAttribute("data-id"),10);
+      var rurl = row.getAttribute("data-url");
+      var rlocked = row.getAttribute("data-locked") === "1";
+      if(pillBtn.classList.contains("claimed")) return;
+      if(rlocked){ showProModal(); return; }
+      claimAndOpen(rid, rurl, pillBtn);
+      return;
+    }
+
+    var row = e.target.closest(".row");
+    if(row){
+      var rid2 = parseInt(row.getAttribute("data-id"),10);
+      var rurl2 = row.getAttribute("data-url");
+      var rlocked2 = row.getAttribute("data-locked") === "1";
+      if(rlocked2){ showProModal(); return; }
+      claimAndOpen(rid2, rurl2, row.querySelector(".row-pill") || row);
+      return;
+    }
+
+    var endingCard = e.target.closest(".ending-card");
+    if(endingCard){
+      var eid = parseInt(endingCard.getAttribute("data-id"),10);
+      var eurl = endingCard.getAttribute("data-url");
+      var elocked = endingCard.getAttribute("data-locked") === "1";
+      if(elocked){ showProModal(); return; }
+      claimAndOpen(eid, eurl, endingCard);
+      return;
+    }
+  });
+
+  // ---------- Hero CTAs ----------
+  // (hero CTA Claim button removed; tiles below take its place)
+  function openSearchModal(){
+    var bd = document.getElementById("searchModalBackdrop");
+    if(!bd) return;
+    bd.style.display = "flex";
+    requestAnimationFrame(function(){ bd.classList.add("show"); });
+    var f = document.getElementById("searchFirstName");
+    if(f) setTimeout(function(){ f.focus(); }, 280);
+  }
+  function closeSearchModal(){
+    var bd = document.getElementById("searchModalBackdrop");
+    if(!bd) return;
+    bd.classList.remove("show");
+    setTimeout(function(){ bd.style.display = "none"; }, 300);
+  }
+  // (hero ctaScan button removed; Search Your Name tile takes its place)
+  document.getElementById("btnSearchOpen").addEventListener("click", function(){
+    openKeywordSearchModal();
+    vibrate(6);
+  });
+
+  // ---------- Keyword Search ----------
+  function openKeywordSearchModal(){
+    var bd = document.getElementById("kwSearchBackdrop");
+    if(!bd) return;
+    bd.style.display = "flex";
+    requestAnimationFrame(function(){ bd.classList.add("show"); });
+    var input = document.getElementById("kwSearchInput");
+    if(input){ input.value = ""; renderKwResults(""); setTimeout(function(){ input.focus(); }, 280); }
+  }
+  function closeKeywordSearchModal(){
+    var bd = document.getElementById("kwSearchBackdrop");
+    if(!bd) return;
+    bd.classList.remove("show");
+    setTimeout(function(){ bd.style.display = "none"; }, 300);
+  }
+  function renderKwResults(query){
+    var host = document.getElementById("kwSearchResults");
+    var hint = document.getElementById("kwSearchHint");
+    if(!host) return;
+    var q = String(query || "").trim().toLowerCase();
+    if(!q){
+      host.innerHTML = "";
+      if(hint) hint.style.display = "block";
+      return;
+    }
+    if(hint) hint.style.display = "none";
+    var matches = allSettlements.filter(function(s){
+      if(s.status === "expired") return false;
+      var name = String(s.name || "").toLowerCase();
+      var desc = String(s.description || "").toLowerCase();
+      var cat = String(s.category || "").toLowerCase();
+      var st = String(s.state || "").toLowerCase();
+      return name.indexOf(q) !== -1 || desc.indexOf(q) !== -1 || cat.indexOf(q) !== -1 || st.indexOf(q) !== -1;
+    });
+    matches.sort(function(a,b){
+      // Settlement category first, then by deadline
+      var as = (a.category || "settlement") === "settlement" ? 0 : 1;
+      var bs = (b.category || "settlement") === "settlement" ? 0 : 1;
+      if(as !== bs) return as - bs;
+      return daysUntil(a.deadline) - daysUntil(b.deadline);
+    });
+    var top = matches.slice(0, 30);
+    if(top.length === 0){
+      host.innerHTML = '<div class="empty"><div class="empty-icon">?</div><div class="empty-title">No matches</div><div class="empty-desc">Try a different keyword.</div></div>';
+      return;
+    }
+    var html = '<div style="font-size:11px;font-weight:800;color:var(--ca-gray);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px;padding-left:2px">' + matches.length + (matches.length === 1 ? ' result' : ' results') + (matches.length > 30 ? ' (showing top 30)' : '') + '</div>';
+    html += '<div class="list">';
+    for(var i = 0; i < top.length; i++){
+      html += renderCard(top[i], i);
+    }
+    html += '</div>';
+    host.innerHTML = html;
+  }
+  var _kwSearchInput = document.getElementById("kwSearchInput");
+  if(_kwSearchInput){
+    var _kwDebounce;
+    _kwSearchInput.addEventListener("input", function(e){
+      clearTimeout(_kwDebounce);
+      var v = e.target.value;
+      _kwDebounce = setTimeout(function(){ renderKwResults(v); }, 120);
+    });
+  }
+  var _kwClose = document.getElementById("kwSearchClose");
+  if(_kwClose) _kwClose.addEventListener("click", closeKeywordSearchModal);
+  var _kwBd = document.getElementById("kwSearchBackdrop");
+  if(_kwBd) _kwBd.addEventListener("click", function(e){ if(e.target === _kwBd) closeKeywordSearchModal(); });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+      var bd = document.getElementById("kwSearchBackdrop");
+      if(bd && bd.classList.contains("show")) closeKeywordSearchModal();
+    }
+  });
+  var _searchClose = document.getElementById("searchModalClose");
+  if(_searchClose) _searchClose.addEventListener("click", closeSearchModal);
+  var _searchBd = document.getElementById("searchModalBackdrop");
+  if(_searchBd) _searchBd.addEventListener("click", function(e){ if(e.target === _searchBd) closeSearchModal(); });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+      var bd = document.getElementById("searchModalBackdrop");
+      if(bd && bd.classList.contains("show")) closeSearchModal();
+    }
+  });
+
+  // ---------- Dropdown filters ----------
+  var _catSelect = document.getElementById("catSelect");
+  if(_catSelect) _catSelect.addEventListener("change", function(){
+    var v = _catSelect.value;
+    var chip = document.querySelector('.chip[data-cat="' + v + '"]');
+    if(chip) chip.click();
+  });
+  var _sortSelect = document.getElementById("sortSelect");
+  if(_sortSelect) _sortSelect.addEventListener("change", function(){
+    var v = _sortSelect.value;
+    var chip = document.querySelector('.chip[data-sort="' + v + '"]');
+    if(chip) chip.click();
+  });
+
+  // ---------- Claims modal (Browse / Ending Soon / No Proof) ----------
+  function openClaimsModal(title, catVal, sortVal, mode){
+    var bd = document.getElementById("claimsModalBackdrop");
+    if(!bd) return;
+    document.getElementById("claimsModalTitle").textContent = title;
+    // Show dropdowns ONLY in Browse mode; hide for focused tile views
+    var dropdowns = document.getElementById("claimsModalDropdowns");
+    if(dropdowns) dropdowns.style.display = (mode === "browse") ? "" : "none";
+    // Tag the modal with current mode so renderPage can adjust the upgrade banner
+    bd.setAttribute("data-mode", mode || "browse");
+    if(catVal){
+      var catSel = document.getElementById("catSelect");
+      if(catSel) catSel.value = catVal;
+      var catChip = document.querySelector('.chip[data-cat="' + catVal + '"]');
+      if(catChip) catChip.click();
+    }
+    if(sortVal){
+      var sortSel = document.getElementById("sortSelect");
+      if(sortSel) sortSel.value = sortVal;
+      var sortChip = document.querySelector('.chip[data-sort="' + sortVal + '"]');
+      if(sortChip){
+        sortChip.click();
+      } else {
+        // No chip exists for synthetic modes (endingsoon, programs) — set state directly
+        currentSort = sortVal;
+        displayed = 0;
+        renderPage();
+      }
+    }
+    bd.style.display = "flex";
+    requestAnimationFrame(function(){ bd.classList.add("show"); });
+  }
+  function closeClaimsModal(){
+    var bd = document.getElementById("claimsModalBackdrop");
+    if(!bd) return;
+    bd.classList.remove("show");
+    setTimeout(function(){ bd.style.display = "none"; }, 300);
+  }
+  document.getElementById("tileBrowse").addEventListener("click", function(){
+    openClaimsModal("Browse Settlements", "all", "deadline", "browse");
+    vibrate(6);
+  });
+  document.getElementById("tileSearch").addEventListener("click", function(){
+    openSearchModal();
+    vibrate(6);
+  });
+  document.getElementById("tileEnding").addEventListener("click", function(){
+    openClaimsModal("Ending Soon", "all", "endingsoon", "endingsoon");
+    vibrate(6);
+  });
+  var tileNoProofBtn = document.getElementById("tileNoProof");
+  if(tileNoProofBtn) tileNoProofBtn.addEventListener("click", function(){
+    openClaimsModal("No Proof Needed", "all", "noproof", "noproof");
+    vibrate(6);
+  });
+  var programsLinkBtn = document.getElementById("programsLink");
+  if(programsLinkBtn) programsLinkBtn.addEventListener("click", function(){
+    openClaimsModal("Programs & Benefits", "all", "programs", "programs");
+    vibrate(6);
+  });
+  var heroSignInBtn = document.getElementById("heroSignIn");
+  if(heroSignInBtn) heroSignInBtn.addEventListener("click", function(){
+    showSignInModal();
+    vibrate(6);
+  });
+
+  function showSignInModal(){
+    // Remove any existing pro modal SYNCHRONOUSLY (closeProModal uses 300ms fade — too slow)
+    var existing = document.getElementById("proModal");
+    if(existing && existing.parentNode) existing.parentNode.removeChild(existing);
+    var backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    backdrop.id = "proModal";
+    backdrop.innerHTML =
+      '<div class="modal">' +
+        '<div class="modal-handle"></div>' +
+        '<div class="modal-icon" style="background:linear-gradient(155deg,#2563EB,#1E3A8A)">&rarr;</div>' +
+        '<div class="modal-title">Sign in</div>' +
+        '<div class="modal-sub">Enter the email you used when subscribing. We&rsquo;ll send a 6-digit code to your inbox.</div>' +
+        '<div id="modalRestoreForm" style="margin-top:20px"></div>' +
+        '<div style="font-size:11px;color:var(--ca-gray);text-align:center;margin-top:16px;line-height:1.5">No password needed. The code is sent to the email on your subscription &mdash; only the inbox owner can sign in.</div>' +
+        '<button class="modal-close" id="modalCloseBtn" type="button" style="margin-top:14px">Cancel</button>' +
+      '</div>';
+    document.body.appendChild(backdrop);
+    requestAnimationFrame(function(){ backdrop.classList.add("show"); });
+    document.getElementById("modalCloseBtn").addEventListener("click", closeProModal);
+    backdrop.addEventListener("click", function(e){ if(e.target === backdrop) closeProModal(); });
+    showRestoreForm();
+    vibrate(10);
+  }
+  var _claimsClose = document.getElementById("claimsModalClose");
+  if(_claimsClose) _claimsClose.addEventListener("click", closeClaimsModal);
+  var _claimsBd = document.getElementById("claimsModalBackdrop");
+  if(_claimsBd) _claimsBd.addEventListener("click", function(e){ if(e.target === _claimsBd) closeClaimsModal(); });
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+      var bd = document.getElementById("claimsModalBackdrop");
+      if(bd && bd.classList.contains("show")) closeClaimsModal();
+    }
+  });
+  // FAB button removed — 4-button bottom nav now
+
+  // ---------- Bottom nav ----------
+  document.querySelectorAll(".nav-btn").forEach(function(b){
+    b.addEventListener("click", function(){
+      document.querySelectorAll(".nav-btn").forEach(function(x){ x.classList.remove("active"); });
+      b.classList.add("active");
+      vibrate(6);
+      var nav = b.getAttribute("data-nav");
+      if(nav === "search"){ document.getElementById("btnSearchOpen").click(); }
+      else if(nav === "alerts"){
+        var ds = document.getElementById("deadlineSection");
+        if(ds && ds.style.display !== "none") ds.scrollIntoView({behavior:"smooth"});
+      } else if(nav === "you"){ showProModal(); }
+      else if(nav === "money"){ window.scrollTo({top:0,behavior:"smooth"}); }
+    });
+  });
+
+  // ---------- Filters ----------
+  document.getElementById("catChips").addEventListener("click", function(e){
+    var b = e.target.closest(".chip");
+    if(!b) return;
+    document.querySelectorAll("#catChips .chip").forEach(function(x){ x.classList.remove("active"); });
+    b.classList.add("active");
+    currentCat = b.getAttribute("data-cat");
+    displayed = 0;
+    renderPage();
+    vibrate(4);
+  });
+  document.getElementById("sortChips").addEventListener("click", function(e){
+    var b = e.target.closest(".chip");
+    if(!b) return;
+    document.querySelectorAll("#sortChips .chip").forEach(function(x){ x.classList.remove("active"); });
+    b.classList.add("active");
+    currentSort = b.getAttribute("data-sort");
+    displayed = 0;
+    renderPage();
+    vibrate(4);
+  });
+  // sortToggle button removed — sort is now a dropdown (#sortSelect)
+  document.getElementById("btnLoadMore").addEventListener("click", function(){ renderPage(); });
+
+  // ---------- Pro modal ----------
+  var _proPlan = "monthly"; // "monthly" or "annual"
+  function showProModal(){
+    closeProModal();
+    var backdrop = document.createElement("div");
+    backdrop.className = "modal-backdrop";
+    backdrop.id = "proModal";
+    backdrop.innerHTML =
+      '<div class="modal">' +
+        '<div class="modal-handle"></div>' +
+        '<div class="modal-icon">$</div>' +
+        '<div class="modal-title">7-Day Free Trial</div>' +
+        '<div class="modal-sub">Unlock direct claim links, deadline alerts, and full payout details for every settlement.</div>' +
+        '<div id="planToggle" style="display:flex;background:var(--ca-surface);border-radius:14px;padding:4px;margin:18px auto 0;max-width:340px">' +
+          '<button id="planMonthly" type="button" data-plan="monthly" style="flex:1;padding:10px 14px;border:none;border-radius:11px;background:#fff;color:var(--ca-ink);font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 1px 3px rgba(0,0,0,.08)">Monthly</button>' +
+          '<button id="planAnnual" type="button" data-plan="annual" style="flex:1;padding:10px 14px;border:none;border-radius:11px;background:transparent;color:var(--ca-gray);font-size:13px;font-weight:800;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px">Annual <span style="font-size:10px;font-weight:900;background:#22c55e;color:#fff;padding:2px 6px;border-radius:8px;letter-spacing:.02em">SAVE 10%</span></button>' +
+        '</div>' +
+        '<div id="planPriceWrap"><div class="modal-price"><span id="planPriceAmt">$4.99</span><span class="per" id="planPriceUnit">/mo after trial</span></div></div>' +
+        '<div class="modal-trial" id="planTrialNote">Free for 7 days &bull; cancel anytime</div>' +
+        '<button class="modal-cta" id="stripeSubBtn" type="button">Start Free Trial</button>' +
+        '<div class="modal-sec" id="planSecCopy" style="line-height:1.5;max-width:360px;margin:10px auto 0">Your card will be charged $4.99/month automatically after the 7-day trial. Cancel anytime in the app. By continuing you agree to the <a href="/terms-of-service" target="_blank" style="color:var(--ca-green);text-decoration:underline">Terms</a> and <a href="/privacy-policy" target="_blank" style="color:var(--ca-green);text-decoration:underline">Privacy Policy</a>.</div>' +
+        '<button class="modal-restore" id="modalRestoreBtn" type="button">I&rsquo;m already a member &middot; Sign in</button>' +
+        '<div id="modalRestoreForm"></div>' +
+        '<button class="modal-close" id="modalCloseBtn" type="button">Maybe later</button>' +
+      '</div>';
+    document.body.appendChild(backdrop);
+    requestAnimationFrame(function(){ backdrop.classList.add("show"); });
+    document.getElementById("modalCloseBtn").addEventListener("click", closeProModal);
+    backdrop.addEventListener("click", function(e){ if(e.target === backdrop) closeProModal(); });
+    document.getElementById("stripeSubBtn").addEventListener("click", startStripeCheckout);
+    var pmBtn = document.getElementById("planMonthly");
+    var paBtn = document.getElementById("planAnnual");
+    function setPlan(plan){
+      _proPlan = plan;
+      var isAnnual = plan === "annual";
+      pmBtn.style.background = isAnnual ? "transparent" : "#fff";
+      pmBtn.style.color = isAnnual ? "var(--ca-gray)" : "var(--ca-ink)";
+      pmBtn.style.boxShadow = isAnnual ? "none" : "0 1px 3px rgba(0,0,0,.08)";
+      paBtn.style.background = isAnnual ? "#fff" : "transparent";
+      paBtn.style.color = isAnnual ? "var(--ca-ink)" : "var(--ca-gray)";
+      paBtn.style.boxShadow = isAnnual ? "0 1px 3px rgba(0,0,0,.08)" : "none";
+      var amt = document.getElementById("planPriceAmt");
+      var unit = document.getElementById("planPriceUnit");
+      var sec = document.getElementById("planSecCopy");
+      if(isAnnual){
+        amt.textContent = "$54";
+        unit.textContent = "/yr after trial";
+        sec.innerHTML = 'Your card will be charged $54/year automatically after the 7-day trial (about $4.50/month, save 10%). Cancel anytime. By continuing you agree to the <a href="/terms-of-service" target="_blank" style="color:var(--ca-green);text-decoration:underline">Terms</a> and <a href="/privacy-policy" target="_blank" style="color:var(--ca-green);text-decoration:underline">Privacy Policy</a>.';
+      } else {
+        amt.textContent = "$4.99";
+        unit.textContent = "/mo after trial";
+        sec.innerHTML = 'Your card will be charged $4.99/month automatically after the 7-day trial. Cancel anytime in the app. By continuing you agree to the <a href="/terms-of-service" target="_blank" style="color:var(--ca-green);text-decoration:underline">Terms</a> and <a href="/privacy-policy" target="_blank" style="color:var(--ca-green);text-decoration:underline">Privacy Policy</a>.';
+      }
+    }
+    pmBtn.addEventListener("click", function(){ setPlan("monthly"); vibrate(4); });
+    paBtn.addEventListener("click", function(){ setPlan("annual"); vibrate(4); });
+    document.getElementById("modalRestoreBtn").addEventListener("click", function(){
+      // Close upsell, open dedicated Sign-in modal for breathing room
+      closeProModal();
+      setTimeout(showSignInModal, 250);
+    });
+    vibrate(10);
+  }
+  function closeProModal(){
+    var m = document.getElementById("proModal");
+    if(!m) return;
+    m.classList.remove("show");
+    setTimeout(function(){ if(m.parentNode) m.parentNode.removeChild(m); }, 300);
+  }
+
+  // ---------- Report Inaccuracy Modal ----------
+  var _reportCurrentId = null;
+  function openReportModal(claimId, claimName){
+    _reportCurrentId = claimId;
+    var bd = document.getElementById("reportModalBackdrop");
+    var nameDiv = document.getElementById("reportClaimName");
+    var reasonSel = document.getElementById("reportReason");
+    var detailsTa = document.getElementById("reportDetails");
+    var errDiv = document.getElementById("reportErr");
+    var charCount = document.getElementById("reportCharCount");
+    if(!bd) return;
+    if(nameDiv) nameDiv.textContent = claimName || ("Claim #" + claimId);
+    if(reasonSel) reasonSel.value = "";
+    if(detailsTa) detailsTa.value = "";
+    if(errDiv){ errDiv.style.display = "none"; errDiv.textContent = ""; }
+    if(charCount) charCount.textContent = "0 / 500";
+    bd.style.display = "flex";
+    requestAnimationFrame(function(){ bd.classList.add("show"); });
+    if(detailsTa){
+      detailsTa.oninput = function(){
+        charCount.textContent = detailsTa.value.length + " / 500";
+      };
+    }
+    vibrate(8);
+  }
+  function closeReportModal(){
+    var bd = document.getElementById("reportModalBackdrop");
+    if(!bd) return;
+    bd.classList.remove("show");
+    setTimeout(function(){ bd.style.display = "none"; }, 300);
+    _reportCurrentId = null;
+  }
+  function submitReport(){
+    var reasonSel = document.getElementById("reportReason");
+    var detailsTa = document.getElementById("reportDetails");
+    var errDiv = document.getElementById("reportErr");
+    var submitBtn = document.getElementById("reportSubmit");
+    if(!reasonSel || !reasonSel.value){
+      errDiv.textContent = "Pick a reason first.";
+      errDiv.style.display = "block";
+      return;
+    }
+    if(!_reportCurrentId){
+      errDiv.textContent = "Lost the claim ID — close and try again.";
+      errDiv.style.display = "block";
+      return;
+    }
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending...";
+    fetch("/api/freemoney/report", {
+      method: "POST",
+      headers: FM_JSON_HEADERS,
+      credentials: "same-origin",
+      body: JSON.stringify({
+        settlement_id: _reportCurrentId,
+        reason: reasonSel.value,
+        details: (detailsTa && detailsTa.value || "").slice(0, 500)
+      })
+    }).then(function(r){ return r.json(); }).then(function(data){
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit report";
+      if(data && data.ok){
+        closeReportModal();
+        showToast("Report sent. Thank you!", "cashed");
+      } else {
+        errDiv.textContent = (data && data.error) || "Could not send report.";
+        errDiv.style.display = "block";
+      }
+    }).catch(function(){
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Submit report";
+      errDiv.textContent = "Network error. Try again.";
+      errDiv.style.display = "block";
+    });
+  }
+  var _rc = document.getElementById("reportModalClose");
+  if(_rc) _rc.addEventListener("click", closeReportModal);
+  var _rbd = document.getElementById("reportModalBackdrop");
+  if(_rbd) _rbd.addEventListener("click", function(e){ if(e.target === _rbd) closeReportModal(); });
+  var _rs = document.getElementById("reportSubmit");
+  if(_rs) _rs.addEventListener("click", submitReport);
+
+  function startStripeCheckout(){
+    var btn = document.getElementById("stripeSubBtn");
+    if(btn){ btn.textContent = "Loading..."; btn.disabled = true; }
+    fetch("/api/freemoney/checkout", {
+      method:"POST",
+      headers:FM_JSON_HEADERS,
+      credentials:"same-origin",
+      body: JSON.stringify({plan: _proPlan || "monthly"})
+    }).then(function(r){ return r.json(); }).then(function(data){
+      if(data && data.url && isSafeUrl(data.url)){
+        window.location.href = data.url;
+      } else {
+        showToast("Could not start checkout");
+        if(btn){ btn.textContent = "Start Free Trial"; btn.disabled = false; }
+      }
+    }).catch(function(){
+      showToast("Connection error");
+      if(btn){ btn.textContent = "Start Free Trial"; btn.disabled = false; }
+    });
+  }
+
+  var _restoreMethod = "email";
+  function showRestoreForm(){
+    var host = document.getElementById("modalRestoreForm");
+    if(!host) return;
+    host.innerHTML =
+      '<label style="font-size:11px;font-weight:700;color:var(--ca-gray);letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:6px;padding-left:2px">Email on your subscription</label>' +
+      '<input class="modal-input" type="email" id="restoreEmail" placeholder="you@example.com" autocomplete="email" style="margin-top:0">' +
+      '<button class="modal-cta" id="restoreSubmit" type="button" style="margin-top:14px">Send 6-digit code</button>' +
+      '<div class="modal-err" id="restoreErr" style="display:none;margin-top:10px"></div>';
+    var input = document.getElementById("restoreEmail");
+    if(input) input.focus();
+    document.getElementById("restoreSubmit").addEventListener("click", submitRestore);
+  }
+
+  function submitRestore(){
+    var btn = document.getElementById("restoreSubmit");
+    var err = document.getElementById("restoreErr");
+    var host = document.getElementById("modalRestoreForm");
+    if(!btn || !host) return;
+    var body, identifier;
+    if(_restoreMethod === "phone"){
+      var phoneInput = document.getElementById("restorePhone");
+      if(!phoneInput) return;
+      identifier = phoneInput.value.trim();
+      var digits = identifier.replace(/\D/g,"");
+      if(digits.length < 10 || digits.length > 15){
+        err.textContent = "Enter a valid phone number.";
+        err.style.display = "block";
+        return;
+      }
+      body = JSON.stringify({phone: identifier, method: "phone"});
+    } else {
+      var emailInput = document.getElementById("restoreEmail");
+      if(!emailInput) return;
+      identifier = emailInput.value.trim();
+      if(!identifier || identifier.length > 254 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifier)){
+        err.textContent = "Enter a valid email address.";
+        err.style.display = "block";
+        return;
+      }
+      body = JSON.stringify({email: identifier, method: "email"});
+    }
+    btn.textContent = "Checking...";
+    btn.disabled = true;
+    err.style.display = "none";
+    fetch("/api/freemoney/restore", {
+      method:"POST",
+      headers:FM_JSON_HEADERS,
+      credentials:"same-origin",
+      body: body
+    }).then(function(r){ return r.json(); }).then(function(data){
+      if(data && data.ok){
+        var label = (_restoreMethod === "phone") ? "Phone" : "Email";
+        var inputType = (_restoreMethod === "phone") ? "tel" : "email";
+        host.innerHTML =
+          '<label style="font-size:11px;font-weight:700;color:var(--ca-gray);letter-spacing:.05em;text-transform:uppercase;display:block;margin-bottom:6px;padding-left:2px">' + label + '</label>' +
+          '<input class="modal-input" type="' + inputType + '" value="' + escHtml(identifier) + '" readonly>' +
+          '<div class="modal-err" id="restoreErr" style="display:block;color:var(--ca-green);margin-top:10px">' + escHtml(data.message || "If a matching subscription exists, we have sent you a 6-digit code.") + '</div>' +
+          '<input class="modal-input" type="text" inputmode="numeric" id="restoreCode" placeholder="6-digit code" maxlength="6" autocomplete="one-time-code" style="margin-top:14px">' +
+          '<button class="modal-cta" id="restoreConfirm" type="button" style="margin-top:14px">Confirm code</button>';
+        document.getElementById("restoreConfirm").addEventListener("click", function(){ submitRestoreConfirm(identifier); });
+        document.getElementById("restoreCode").focus();
+      } else if(data && data.restored){
+        localStorage.setItem("freemoney_pro","1");
+        if(data.email) localStorage.setItem("freemoney_email", data.email);
+        window.location.reload();
+      } else {
+        err.textContent = (data && data.error) || "No active subscription for this email.";
+        err.style.display = "block";
+        btn.textContent = "Restore";
+        btn.disabled = false;
+      }
+    }).catch(function(){
+      err.textContent = "Connection error.";
+      err.style.display = "block";
+      btn.textContent = "Restore";
+      btn.disabled = false;
+    });
+  }
+
+  function submitRestoreConfirm(identifier){
+    var input = document.getElementById("restoreCode");
+    var btn = document.getElementById("restoreConfirm");
+    var err = document.getElementById("restoreErr");
+    if(!input || !btn) return;
+    var code = input.value.trim();
+    if(!/^\d{6}$/.test(code)){
+      err.style.color = "";
+      err.textContent = "Enter the 6-digit code.";
+      err.style.display = "block";
+      return;
+    }
+    btn.textContent = "Confirming...";
+    btn.disabled = true;
+    var confirmBody = (_restoreMethod === "phone")
+      ? JSON.stringify({phone: identifier, code: code, method: "phone"})
+      : JSON.stringify({email: identifier, code: code, method: "email"});
+    fetch("/api/freemoney/restore/confirm", {
+      method:"POST",
+      headers:FM_JSON_HEADERS,
+      credentials:"same-origin",
+      body: confirmBody
+    }).then(function(r){ return r.json(); }).then(function(data){
+      if(data && data.pro){
+        localStorage.setItem("freemoney_pro","1");
+        if(data.email) localStorage.setItem("freemoney_email", data.email);
+        window.location.reload();
+      } else {
+        err.style.color = "";
+        err.textContent = (data && data.error) || "Invalid or expired code.";
+        err.style.display = "block";
+        btn.textContent = "Confirm Code";
+        btn.disabled = false;
+      }
+    }).catch(function(){
+      err.style.color = "";
+      err.textContent = "Connection error.";
+      err.style.display = "block";
+      btn.textContent = "Confirm Code";
+      btn.disabled = false;
+    });
+  }
+
+  // Pro card taps — Pro users go to Stripe Customer Portal, free users see upgrade modal
+  function openBillingPortal(){
+    showToast("Opening billing portal...");
+    fetch("/api/freemoney/portal", {
+      method:"POST",
+      headers:FM_JSON_HEADERS,
+      credentials:"same-origin"
+    }).then(function(r){ return r.json(); }).then(function(data){
+      if(data && data.url && isSafeUrl(data.url)){
+        window.location.href = data.url;
+      } else {
+        showToast(data && data.error ? data.error : "Could not open billing portal");
+      }
+    }).catch(function(){ showToast("Connection error"); });
+  }
+  document.getElementById("proCard").addEventListener("click", function(e){
+    if(e.target.closest("#proRestoreLink")) return;
+    if(isPro){ openBillingPortal(); return; }
+    showProModal();
+  });
+  document.getElementById("proRestoreLink").addEventListener("click", function(e){
+    e.stopPropagation();
+    showProModal();
+    setTimeout(showRestoreForm, 400);
+  });
+  // Footer "Manage subscription" link — Pro users go to portal, non-Pro users see Sign In prompt
+  var _fmManage = document.getElementById("footerManageLink");
+  if(_fmManage){
+    _fmManage.addEventListener("click", function(e){
+      e.preventDefault();
+      if(isPro){
+        openBillingPortal();
+      } else {
+        showProModal();
+        setTimeout(showRestoreForm, 400);
+      }
+    });
+  }
+
+  // ---------- Stripe return flow ----------
+  var urlParams = new URLSearchParams(window.location.search);
+  if(urlParams.get("pro") === "success" && urlParams.get("session_id")){
+    var checkoutSessionId = urlParams.get("session_id");
+    window.history.replaceState({}, document.title, "/freemoney");
+    fetch("/api/freemoney/verify", {
+      method:"POST",
+      headers:FM_JSON_HEADERS,
+      credentials:"same-origin",
+      body: JSON.stringify({session_id: checkoutSessionId})
+    }).then(function(r){ return r.json(); }).then(function(data){
+      if(data && data.pro){
+        localStorage.setItem("freemoney_pro","1");
+        if(data.email) localStorage.setItem("freemoney_email", data.email);
+        isPro = true;
+        rerender();
+        updateNotifUI();
+        updateProCard();
+        showToast("Pro unlocked. Welcome!");
+      }
+    }).catch(function(){});
+  }
+
+  // ---------- Name search ----------
+  document.getElementById("btnSearchName").addEventListener("click", function(){
+    if(!isPro){ showProModal(); return; }
+    var firstName = document.getElementById("searchFirstName").value.trim();
+    var lastName = document.getElementById("searchLastName").value.trim();
+    var city = document.getElementById("searchCity").value.trim();
+    var state = document.getElementById("searchState").value;
+    var btn = this;
+    var resultsDiv = document.getElementById("nameSearchResults");
+
+    if(!validName(firstName) || !validName(lastName)){
+      resultsDiv.style.display = "block";
+      resultsDiv.innerHTML = '<div class="modal-err" style="display:block">Enter a valid first and last name (letters only).</div>';
+      return;
+    }
+    if(city && !/^[a-zA-Z\s\-'.]{0,60}$/.test(city)){
+      resultsDiv.style.display = "block";
+      resultsDiv.innerHTML = '<div class="modal-err" style="display:block">Invalid city.</div>';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = "Searching...";
+    resultsDiv.style.display = "block";
+    resultsDiv.innerHTML = '<div class="empty"><div class="empty-title">Scanning databases</div><div class="empty-desc">MissingMoney.com, state treasuries...</div></div>';
+
+    fetch("/api/freemoney/search-name", {
+      method:"POST",
+      headers:FM_JSON_HEADERS,
+      credentials:"same-origin",
+      body: JSON.stringify({first_name: firstName, last_name: lastName, city: city, state: state})
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(data){
+      btn.disabled = false;
+      btn.textContent = "Search All Databases";
+      if(data && data.error){
+        resultsDiv.innerHTML = '<div class="modal-err" style="display:block">' + escHtml(data.error) + '</div>';
+        return;
+      }
+      var results = (data && data.results) || [];
+      var stateLinks = (data && data.state_links) || [];
+      var html = "";
+      if(results.length > 0){
+        html += '<div style="font-size:13px;font-weight:800;color:var(--ca-green);margin-bottom:10px">' + results.length + ' match' + (results.length > 1 ? 'es' : '') + ' found</div>';
+        for(var i=0; i<results.length && i<30; i++){
+          var r = results[i];
+          html += '<div style="background:var(--ca-surface);border:1px solid var(--ca-border);border-radius:16px;padding:12px;margin-bottom:8px">';
+          html += '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">';
+          html += '<div style="font-size:14px;font-weight:700;color:var(--ca-ink)">' + escHtml(r.name) + '</div>';
+          if(r.amount && r.amount !== "Not disclosed"){
+            html += '<div style="font-size:14px;font-weight:900;color:var(--ca-green)">' + escHtml(r.amount) + '</div>';
+          }
+          html += '</div>';
+          html += '<div style="font-size:11px;color:var(--ca-gray);margin-top:4px;font-weight:600">' + escHtml(r.source || "");
+          if(r.state) html += ' &middot; ' + escHtml(r.state);
+          if(r.reported_by) html += ' &middot; ' + escHtml(r.reported_by);
+          html += '</div>';
+          if(r.claim_url && isSafeUrl(r.claim_url)){
+            html += '<a href="' + escHtml(r.claim_url) + '" target="_blank" rel="noopener noreferrer" style="display:inline-block;margin-top:8px;padding:7px 14px;border-radius:99px;background:var(--ca-ink);color:#fff;font-size:11px;font-weight:800;text-decoration:none">Claim</a>';
+          }
+          html += '</div>';
+        }
+      } else {
+        html += '<div style="font-size:13px;color:var(--ca-gray);margin-bottom:10px;font-weight:600">No automated matches. Try state sites below.</div>';
+      }
+      if(stateLinks.length > 0){
+        html += '<div style="font-size:12px;font-weight:800;color:var(--ca-ink);margin-top:14px;margin-bottom:8px">Search state sites directly:</div>';
+        for(var j=0; j<stateLinks.length && j<55; j++){
+          var sl = stateLinks[j];
+          if(!sl.url || !isSafeUrl(sl.url)) continue;
+          html += '<a href="' + escHtml(sl.url) + '" target="_blank" rel="noopener noreferrer" style="display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:6px;background:var(--ca-surface);border:1px solid var(--ca-border);border-radius:14px;text-decoration:none">';
+          html += '<span style="font-size:12px;font-weight:900;color:var(--ca-purple);min-width:24px">' + escHtml(sl.state || "") + '</span>';
+          html += '<span style="font-size:13px;color:var(--ca-ink);font-weight:600;flex:1">' + escHtml(sl.name || "") + '</span>';
+          html += '<span style="font-size:11px;color:var(--ca-gray);font-weight:700">Search &rarr;</span>';
+          html += '</a>';
+        }
+      }
+      resultsDiv.innerHTML = html;
+    })
+    .catch(function(){
+      btn.disabled = false;
+      btn.textContent = "Search All Databases";
+      resultsDiv.innerHTML = '<div class="modal-err" style="display:block">Search failed. Try again.</div>';
+    });
+  });
+
+  // ---------- Deadlines (panel removed; this handler is a no-op now) ----------
+  var deadlineOpen = false;
+  var _deadlineToggleBtn = document.getElementById("deadlineToggle");
+  if(_deadlineToggleBtn) _deadlineToggleBtn.addEventListener("click", function(){
+    deadlineOpen = !deadlineOpen;
+    var dl = document.getElementById("deadlineList"); if(dl) dl.classList.toggle("open", deadlineOpen);
+    var dc = document.getElementById("deadlineChevron"); if(dc) dc.classList.toggle("open", deadlineOpen);
+    vibrate(4);
+  });
+
+  function formatDeadlineDate(dateStr){
+    if(!dateStr) return "";
+    var parts = String(dateStr).split("-");
+    var d = new Date(parseInt(parts[0],10), parseInt(parts[1],10)-1, parseInt(parts[2],10));
+    var months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    return months[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+  }
+  function formatDeadlinePayout(s){
+    var low = s.payout_low || 0, high = s.payout_high || 0;
+    if(high > 0 && low > 0) return "$" + low.toLocaleString() + " - $" + high.toLocaleString();
+    if(high > 0) return "Up to $" + high.toLocaleString();
+    if(s.payout) return s.payout;
+    return "Varies";
+  }
+
+  function renderDeadlineItem(s){
+    var badgeClass = s.urgency === "critical" ? "critical" : "warning";
+    var badgeText = s.days_left === 0 ? "Today" : (s.days_left === 1 ? "1 day" : s.days_left + " days");
+    var canSee = isPro;
+    return (
+      '<div class="deadline-item' + (!canSee ? " blurred" : "") + '" data-id="' + parseInt(s.id,10) + '" data-url="' + escHtml(s.claim_url || "#") + '">' +
+        '<div class="deadline-item-top">' +
+          '<div class="deadline-item-name">' + escHtml(s.name) + '</div>' +
+          '<div class="deadline-badge ' + badgeClass + '">' + escHtml(badgeText) + '</div>' +
+        '</div>' +
+        '<div class="deadline-meta">' +
+          '<span>Due: ' + escHtml(formatDeadlineDate(s.deadline_parsed)) + '</span>' +
+          '<span class="deadline-amount">' + escHtml(formatDeadlinePayout(s)) + '</span>' +
+        '</div>' +
+        '<button class="deadline-claim-btn' + (!canSee ? " locked" : "") + '" data-deadline-claim="1" data-id="' + parseInt(s.id,10) + '" data-url="' + escHtml(s.claim_url || "#") + '" type="button">' + (canSee ? "Claim Now" : "Unlock Pro") + '</button>' +
+      '</div>'
+    );
+  }
+
+  function loadDeadlines(){
+    fetch("/api/freemoney/deadlines", { headers:FM_JSON_HEADERS, credentials:"same-origin" })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        var items = (data && data.deadlines) || [];
+        var sec = document.getElementById("deadlineSection");
+        if(items.length === 0){ sec.style.display = "none"; return; }
+        sec.style.display = "";
+        document.getElementById("deadlineCount").textContent = items.length;
+        var html = "";
+        for(var i=0; i<items.length && i<50; i++){
+          html += renderDeadlineItem(items[i]);
+        }
+        document.getElementById("deadlineList").innerHTML = html;
+        // Auto-expand on critical
+        var hasCrit = items.some(function(s){ return s.urgency === "critical"; });
+        if(hasCrit && !deadlineOpen){
+          deadlineOpen = true;
+          document.getElementById("deadlineList").classList.add("open");
+          document.getElementById("deadlineChevron").classList.add("open");
+        }
+      })
+      .catch(function(){});
+  }
+
+  document.body.addEventListener("click", function(e){
+    var db = e.target.closest("[data-deadline-claim]");
+    if(!db) return;
+    e.stopPropagation();
+    var id = parseInt(db.getAttribute("data-id"),10);
+    var url = db.getAttribute("data-url");
+    if(!isPro){ showProModal(); return; }
+    claimAndOpen(id, url, db);
+  });
+
+  // ---------- Load settlements ----------
+  function loadData(){
+    fetch("/api/settlements", { credentials:"same-origin" })
+      .then(function(r){ return r.json(); })
+      .then(function(data){
+        allSettlements = (data && data.settlements) || [];
+        updateHeroStats();
+        rerender();
+      })
+      .catch(function(){
+        document.getElementById("cardList").innerHTML = '<div class="empty"><div class="empty-icon">!</div><div class="empty-title">Could not load settlements</div><div class="empty-desc">Please try again later.</div></div>';
+      });
+  }
+
+  // ---------- Push / Service Worker ----------
+  var notifBar = document.getElementById("notifBar");
+  var notifToggle = document.getElementById("notifToggle");
+  var notifStatus = document.getElementById("notifStatus");
+  var swRegistration = null;
+  var pushSubscription = null;
+
+  function urlBase64ToUint8Array(base64String){
+    var padding = "=".repeat((4 - base64String.length % 4) % 4);
+    var base64 = (base64String + padding).replace(/-/g,"+").replace(/_/g,"/");
+    var raw = window.atob(base64);
+    var arr = new Uint8Array(raw.length);
+    for(var i=0;i<raw.length;i++) arr[i] = raw.charCodeAt(i);
+    return arr;
+  }
+
+  function updateNotifUI(){
+    if(!("serviceWorker" in navigator) || !("PushManager" in window)){ notifBar.classList.remove("show"); return; }
+    if(!isPro){ notifBar.classList.remove("show"); return; }
+    notifBar.classList.add("show");
+    if(Notification.permission === "denied"){
+      notifStatus.textContent = "Blocked in browser settings";
+      notifToggle.checked = false;
+      notifToggle.disabled = true;
+      return;
+    }
+    if(pushSubscription){
+      notifToggle.checked = true;
+      notifStatus.textContent = "ON -- you will get deadline alerts";
+    } else {
+      notifToggle.checked = false;
+      notifStatus.textContent = "OFF";
+    }
+  }
+
+  function initServiceWorker(){
+    if(!("serviceWorker" in navigator)) return;
+    navigator.serviceWorker.register("/sw-freemoney.js", { scope:"/" })
+      .then(function(reg){
+        swRegistration = reg;
+        return reg.pushManager.getSubscription();
+      })
+      .then(function(sub){ pushSubscription = sub; updateNotifUI(); })
+      .catch(function(){});
+  }
+
+  function subscribePush(){
+    if(!swRegistration) return Promise.resolve(false);
+    return Notification.requestPermission()
+      .then(function(perm){
+        if(perm !== "granted"){ notifStatus.textContent = "Permission denied"; return false; }
+        return fetch("/api/freemoney/push/vapid-key", { headers:FM_JSON_HEADERS, credentials:"same-origin" })
+          .then(function(r){ return r.json(); })
+          .then(function(data){
+            if(!data || !data.publicKey){ notifStatus.textContent = "Server error"; return false; }
+            return swRegistration.pushManager.subscribe({
+              userVisibleOnly:true,
+              applicationServerKey: urlBase64ToUint8Array(data.publicKey)
+            }).then(function(sub){
+              pushSubscription = sub;
+              var json = sub.toJSON();
+              var email = localStorage.getItem("freemoney_email") || "";
+              return fetch("/api/freemoney/push/subscribe", {
+                method:"POST",
+                headers:FM_JSON_HEADERS,
+                credentials:"same-origin",
+                body: JSON.stringify({ endpoint: json.endpoint, keys: json.keys, email: email })
+              }).then(function(){
+                return fetch("/api/freemoney/push/test", {
+                  method:"POST",
+                  headers:FM_JSON_HEADERS,
+                  credentials:"same-origin",
+                  body: JSON.stringify({ endpoint: json.endpoint, keys: json.keys })
+                });
+              }).then(function(){ updateNotifUI(); return true; });
+            });
+          });
+      })
+      .catch(function(){ notifStatus.textContent = "Failed to enable"; return false; });
+  }
+
+  function unsubscribePush(){
+    if(!pushSubscription) return Promise.resolve();
+    var endpoint = pushSubscription.endpoint;
+    return pushSubscription.unsubscribe().then(function(){
+      pushSubscription = null;
+      return fetch("/api/freemoney/push/unsubscribe", {
+        method:"POST",
+        headers:FM_JSON_HEADERS,
+        credentials:"same-origin",
+        body: JSON.stringify({ endpoint: endpoint })
+      });
+    }).then(function(){ updateNotifUI(); }).catch(function(){});
+  }
+
+  if(notifToggle) notifToggle.addEventListener("change", function(){
+    if(this.checked){
+      subscribePush().then(function(ok){ if(!ok) notifToggle.checked = false; });
+    } else {
+      unsubscribePush();
+    }
+  });
+
+  // Auto-prompt for notifications after Pro confirmed via Stripe return
+  if(urlParams.get("pro") === "success" && urlParams.get("session_id")){
+    var proPoll = setInterval(function(){
+      if(isPro && swRegistration){
+        clearInterval(proPoll);
+        setTimeout(function(){
+          if(!pushSubscription && Notification.permission !== "denied") subscribePush();
+        }, 1800);
+      }
+    }, 500);
+    setTimeout(function(){ clearInterval(proPoll); }, 15000);
+  }
+
+  // ---------- Entrance observer ----------
+  if("IntersectionObserver" in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        if(en.isIntersecting){ en.target.classList.add("anim"); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.08 });
+    setTimeout(function(){
+      document.querySelectorAll(".row, .qc-card, .ending-card, .deadline-item").forEach(function(el){ io.observe(el); });
+    }, 150);
+  }
+
+  // ---------- Init ----------
+  updateProCard();
+  checkProStatus();
+  loadData();
+  loadDeadlines();
+  initServiceWorker();
+  updateNotifUI();
+})();
+</script>
+</body>
+</html>
