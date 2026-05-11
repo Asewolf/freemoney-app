@@ -42,3 +42,4 @@ SQLite at `$DB_PATH` (default `/data/settlements.db`). To seed it on a fresh
 deploy, upload your existing `settlements.db` to the Volume.
 
 Workers in `workers/` populate it on a cron schedule.
+# Build trigger 1778474109
