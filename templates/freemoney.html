@@ -986,10 +986,34 @@ button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,
           localStorage.setItem("freemoney_pro","1");
           if(data.email) localStorage.setItem("freemoney_email", data.email);
           if(!isPro){ isPro = true; rerender(); updateNotifUI(); updateProCard(); }
-        } else {
-          localStorage.removeItem("freemoney_pro");
-          if(isPro){ isPro = false; rerender(); updateNotifUI(); updateProCard(); }
+          updateProCard();
+          return;
         }
+        // Server says non-Pro. If localStorage thinks we were Pro, try auto-restore from Stripe.
+        var savedEmail = localStorage.getItem("freemoney_email") || "";
+        var wasPro = localStorage.getItem("freemoney_pro") === "1";
+        if(wasPro && savedEmail){
+          fetch("/api/freemoney/auto-restore", {
+            method:"POST", headers:FM_JSON_HEADERS, credentials:"same-origin",
+            body: JSON.stringify({email: savedEmail})
+          }).then(function(r){ return r.json(); }).then(function(rd){
+            if(rd && rd.pro){
+              localStorage.setItem("freemoney_pro","1");
+              if(!isPro){ isPro = true; rerender(); updateNotifUI(); updateProCard(); }
+            } else {
+              localStorage.removeItem("freemoney_pro");
+              if(isPro){ isPro = false; rerender(); updateNotifUI(); updateProCard(); }
+            }
+            updateProCard();
+          }).catch(function(){
+            localStorage.removeItem("freemoney_pro");
+            if(isPro){ isPro = false; rerender(); updateNotifUI(); updateProCard(); }
+            updateProCard();
+          });
+          return;
+        }
+        localStorage.removeItem("freemoney_pro");
+        if(isPro){ isPro = false; rerender(); updateNotifUI(); updateProCard(); }
         updateProCard();
       })
       .catch(function(){});

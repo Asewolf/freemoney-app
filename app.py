@@ -271,6 +271,46 @@ def verify_pro_session(token):
     except Exception:
         return False, ""
 
+
+def stripe_has_active_subscription(email=None, customer_id=None):
+    """Source-of-truth check: does this email/customer have an active subscription in Stripe?
+    Used as a fallback when the local DB has been wiped (Railway redeploy without Volume).
+    Returns (active: bool, customer_id: str, email: str).
+    """
+    try:
+        import stripe as _stripe
+        _stripe.api_key = cfg()["stripe_secret_key"]
+        if not _stripe.api_key:
+            return False, "", ""
+        # Resolve customer
+        cust = None
+        if customer_id:
+            try:
+                cust = _stripe.Customer.retrieve(customer_id)
+            except Exception:
+                cust = None
+        if cust is None and email:
+            try:
+                results = _stripe.Customer.list(email=email, limit=5)
+                if results and results.data:
+                    cust = results.data[0]
+            except Exception:
+                cust = None
+        if not cust:
+            return False, "", ""
+        # Check for any active subscription
+        try:
+            subs = _stripe.Subscription.list(customer=cust.id, status="all", limit=10)
+            for s in (subs.data or []):
+                if s.status in ("active", "trialing", "past_due"):
+                    return True, cust.id, (cust.email or email or "")
+        except Exception:
+            pass
+        return False, cust.id, (cust.email or email or "")
+    except Exception as e:
+        log(f"stripe_has_active_subscription error: {e}")
+        return False, "", ""
+
 # ── Email sending (SMTP via Google Workspace) ──────────────────────────────────
 def send_email(to_addr, subject, body):
     host = os.environ.get("SMTP_HOST", "smtp.gmail.com")
@@ -485,9 +525,19 @@ def fm_verify():
                 return no_cache(jsonify({"pro": False, "error": "Checkout session already used"})), 400
             token = create_pro_session(customer_id, email)
             resp = jsonify({"pro": True, "customer": customer_id, "email": email})
-            resp.set_cookie("fm_pro_token", token, httponly=True, samesite="Strict",
+            # SameSite=Lax so the cookie survives the Stripe → app redirect on iOS Safari
+            resp.set_cookie("fm_pro_token", token, httponly=True, samesite="Lax",
                             max_age=30*24*3600, path="/",
                             secure=(IS_PROD or request.is_secure))
+            # Non-httponly companion cookie so JS can call /auto-restore after a Railway redeploy wipes the DB
+            if email:
+                resp.set_cookie("fm_pro_email", email, httponly=False, samesite="Lax",
+                                max_age=180*24*3600, path="/",
+                                secure=(IS_PROD or request.is_secure))
+            if customer_id:
+                resp.set_cookie("fm_pro_cust", customer_id, httponly=False, samesite="Lax",
+                                max_age=180*24*3600, path="/",
+                                secure=(IS_PROD or request.is_secure))
             return no_cache(resp)
         return no_cache(jsonify({"pro": False}))
     except Exception as e:
@@ -498,7 +548,51 @@ def fm_verify():
 def fm_pro_status():
     token = request.cookies.get("fm_pro_token", "")
     is_pro, email = verify_pro_session(token)
-    return no_cache(jsonify({"pro": is_pro, "email": email}))
+    if is_pro:
+        return no_cache(jsonify({"pro": True, "email": email}))
+    # Local DB miss — check Stripe directly using the companion cookies we set at /verify
+    email_hint = request.cookies.get("fm_pro_email", "")
+    cust_hint = request.cookies.get("fm_pro_cust", "")
+    if email_hint or cust_hint:
+        active, customer_id, recovered_email = stripe_has_active_subscription(email_hint, cust_hint)
+        if active:
+            upsert_pro_user(recovered_email or email_hint, customer_id, phone=None)
+            new_token = create_pro_session(customer_id, recovered_email or email_hint)
+            resp = jsonify({"pro": True, "email": recovered_email or email_hint, "recovered": True})
+            resp.set_cookie("fm_pro_token", new_token, httponly=True, samesite="Lax",
+                            max_age=30*24*3600, path="/",
+                            secure=(IS_PROD or request.is_secure))
+            return no_cache(resp)
+    return no_cache(jsonify({"pro": False, "email": ""}))
+
+
+@app.route("/api/freemoney/auto-restore", methods=["POST"])
+def fm_auto_restore():
+    """Frontend-callable bullet: 'I think I'm Pro, check Stripe directly.' Takes {email}.
+    No magic code needed because the email is sourced from the cookies/localStorage that were
+    set at /verify time. If you've never paid, Stripe won't find an active sub and you get nothing.
+    """
+    ok, err = check_body_size()
+    if not ok: return err
+    x = require_xhr()
+    if x: return x
+    if not rate_check("auto_restore", 10):
+        return sec_headers(jsonify({"pro": False, "error": "Too many requests."})), 429
+    data = request.get_json(silent=True) or {}
+    email, e = validate_email(data.get("email", "") or request.cookies.get("fm_pro_email", ""))
+    cust_hint = data.get("customer_id", "") or request.cookies.get("fm_pro_cust", "")
+    if e and not cust_hint:
+        return sec_headers(jsonify({"pro": False, "error": "No email or customer hint"})), 400
+    active, customer_id, recovered_email = stripe_has_active_subscription(email, cust_hint)
+    if not active:
+        return no_cache(jsonify({"pro": False}))
+    upsert_pro_user(recovered_email or email, customer_id, phone=None)
+    new_token = create_pro_session(customer_id, recovered_email or email)
+    resp = jsonify({"pro": True, "email": recovered_email or email, "recovered": True})
+    resp.set_cookie("fm_pro_token", new_token, httponly=True, samesite="Lax",
+                    max_age=30*24*3600, path="/",
+                    secure=(IS_PROD or request.is_secure))
+    return no_cache(resp)
 
 @app.route("/api/freemoney/report", methods=["POST"])
 def fm_report():
@@ -716,12 +810,23 @@ def fm_restore_confirm():
                         (email,)).fetchone()
     conn.commit()
     conn.close()
-    if not user:
+    customer_id = user["stripe_customer_id"] if user else None
+    # Local DB miss — fall through to Stripe lookup so a wiped DB never blocks a real subscriber
+    if not customer_id:
+        active, cust, _ = stripe_has_active_subscription(email)
+        if active:
+            customer_id = cust
+            upsert_pro_user(email, customer_id, phone=None)
+    if not customer_id:
         return sec_headers(jsonify({"ok": False, "error": "No active subscription"})), 404
-    token = create_pro_session(user["stripe_customer_id"], email)
+    token = create_pro_session(customer_id, email)
     resp = jsonify({"ok": True, "pro": True, "email": email})
-    resp.set_cookie("fm_pro_token", token, httponly=True, samesite="Strict",
+    resp.set_cookie("fm_pro_token", token, httponly=True, samesite="Lax",
                     max_age=30*24*3600, path="/", secure=(IS_PROD or request.is_secure))
+    resp.set_cookie("fm_pro_email", email, httponly=False, samesite="Lax",
+                    max_age=180*24*3600, path="/", secure=(IS_PROD or request.is_secure))
+    resp.set_cookie("fm_pro_cust", customer_id, httponly=False, samesite="Lax",
+                    max_age=180*24*3600, path="/", secure=(IS_PROD or request.is_secure))
     return no_cache(resp)
 
 # ── Health + root ──────────────────────────────────────────────────────────────
